@@ -2,8 +2,10 @@ package com.lexycon.hostcardemulation;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.nfc.NfcAdapter;
+import android.os.Handler;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
@@ -27,6 +29,15 @@ public class MainActivity extends AppCompatActivity {
         } else{
                 new NFCDialog(this).showNFCUnsupported();
         }
+
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                Intent myIntent = new Intent(getApplicationContext(), Questions.class);
+                startActivity(myIntent);
+            }
+        }, 5000);
 
 
     }
