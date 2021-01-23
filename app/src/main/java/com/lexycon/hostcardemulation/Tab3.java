@@ -17,16 +17,16 @@ import java.util.List;
 import java.util.Locale;
 
 
-
-import com.thejuki.kformmaster.helper.FormLayouts;
 import com.thejuki.kformmaster.listener.OnFormElementValueChangedListener;
 import com.thejuki.kformmaster.model.BaseFormElement;
 import com.thejuki.kformmaster.model.FormButtonElement;
-import com.thejuki.kformmaster.model.FormInlineDatePickerElement;
 import com.thejuki.kformmaster.model.FormHeader;
 import com.thejuki.kformmaster.model.FormPickerDateElement;
 import com.thejuki.kformmaster.model.FormSingleLineEditTextElement;
 import com.thejuki.kformmaster.helper.FormBuildHelper;
+
+import kotlin.Unit;
+import kotlin.jvm.functions.Function2;
 
 public class Tab3 extends Fragment {
     @Nullable
@@ -69,6 +69,13 @@ public class Tab3 extends Fragment {
         FormButtonElement button = new FormButtonElement(4);
         button.setValue("Save Info");
 
+        button.getValueObservers().add(new Function2<String, BaseFormElement<String>, Unit>() {
+            @Override
+            public Unit invoke(String newValue, BaseFormElement<String> element) {
+                Log.v("Main", "The button was pressed.");
+                return Unit.INSTANCE;
+            }
+        });
 
         elements.add(header);
         elements.add(name);
@@ -76,6 +83,11 @@ public class Tab3 extends Fragment {
         elements.add(street);
         elements.add(button);
 
+
+
+
+
+        
 
 
         formBuilder.addFormElements(elements);
