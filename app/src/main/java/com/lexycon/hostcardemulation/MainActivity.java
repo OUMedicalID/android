@@ -4,14 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.nfc.NfcAdapter;
-import android.os.Handler;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.lexycon.hostcardemulation.NFC.DataStoreUtil;
+import com.lexycon.hostcardemulation.NFC.NFCDialog;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -70,11 +69,11 @@ public class MainActivity extends AppCompatActivity {
                         case R.id.nav_home:
                             selectedFragment = new Home();
                             break;
-                        case R.id.nav_tab2:
-                            selectedFragment = new Tab2();
-                            break;
                         case R.id.nav_tab3:
-                            selectedFragment = new Tab3();
+                            selectedFragment = new Questions();
+                            break;
+                        case R.id.nav_tab2:
+                            selectedFragment = new Settings();
                             break;
                     }
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,

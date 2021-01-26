@@ -1,4 +1,4 @@
-package com.lexycon.hostcardemulation
+package com.lexycon.hostcardemulation.NFC
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE

@@ -9,10 +9,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 
-public class Tab2 extends Fragment {
+public class Settings extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_tab2, container, false);
+        return inflater.inflate(R.layout.settings, container, false);
     }
 }

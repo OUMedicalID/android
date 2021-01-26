@@ -1,10 +1,11 @@
-package com.lexycon.hostcardemulation
+package com.lexycon.hostcardemulation.NFC
 
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.provider.Settings
+import com.lexycon.hostcardemulation.R
 
 class NFCDialog(context: Context) {
     var context: Context = context;

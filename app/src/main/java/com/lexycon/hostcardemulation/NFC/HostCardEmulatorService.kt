@@ -1,4 +1,4 @@
-package com.lexycon.hostcardemulation
+package com.lexycon.hostcardemulation.NFC
 
 import android.nfc.cardemulation.HostApduService
 import android.os.Bundle
@@ -49,7 +49,8 @@ class HostCardEmulatorService: HostApduService() {
             // we wont return success 90 00, we respond with our uid
             // return ByteArrayHexUtil.hexStringToByteArray(STATUS_SUCCESS)
 
-            val dataStore = DataStoreUtil(this);
+            val dataStore =
+                DataStoreUtil(this);
             val uid = dataStore.getID();
             return ByteArrayHexUtil.hexStringToByteArray(uid)
 
