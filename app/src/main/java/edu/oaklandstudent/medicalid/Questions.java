@@ -1,4 +1,4 @@
-package com.lexycon.hostcardemulation;
+package edu.oaklandstudent.medicalid;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,19 +11,15 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 
+import edu.oaklandstudent.medicalid.R;
 import com.thejuki.kformmaster.listener.OnFormElementValueChangedListener;
 import com.thejuki.kformmaster.model.BaseFormElement;
 import com.thejuki.kformmaster.model.FormButtonElement;
 import com.thejuki.kformmaster.model.FormHeader;
-import com.thejuki.kformmaster.model.FormPickerDateElement;
-import com.thejuki.kformmaster.model.FormSingleLineEditTextElement;
 import com.thejuki.kformmaster.helper.FormBuildHelper;
 
 import kotlin.Unit;

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.lexycon.hostcardemulation">
+    package="edu.oaklandstudent.medicalid">
 
     <uses-permission android:name="android.permission.NFC" />
 
@@ -16,8 +16,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <!--<activity android:name=".Questions"></activity>-->
-        <activity android:name=".PersonalInformation"></activity>
-        <activity android:name=".MainActivity">
+        <activity android:name="edu.oaklandstudent.medicalid.PersonalInformation"></activity>
+        <activity android:name="edu.oaklandstudent.medicalid.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,7 +26,7 @@
         </activity>
 
         <service
-            android:name=".NFC.HostCardEmulatorService"
+            android:name="edu.oaklandstudent.medicalid.NFC.HostCardEmulatorService"
             android:exported="true"
             android:permission="android.permission.BIND_NFC_SERVICE">
             <intent-filter>

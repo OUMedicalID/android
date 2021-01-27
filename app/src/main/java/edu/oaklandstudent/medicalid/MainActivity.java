@@ -1,4 +1,4 @@
-package com.lexycon.hostcardemulation;
+package edu.oaklandstudent.medicalid;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,8 +9,10 @@ import android.nfc.NfcAdapter;
 import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.lexycon.hostcardemulation.NFC.DataStoreUtil;
-import com.lexycon.hostcardemulation.NFC.NFCDialog;
+import edu.oaklandstudent.medicalid.NFC.DataStoreUtil;
+import edu.oaklandstudent.medicalid.NFC.NFCDialog;
+
+import edu.oaklandstudent.medicalid.R;
 
 public class MainActivity extends AppCompatActivity {
 

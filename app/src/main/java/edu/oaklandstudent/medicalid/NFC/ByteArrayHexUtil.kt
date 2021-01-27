@@ -1,4 +1,4 @@
-package com.lexycon.hostcardemulation.NFC
+package edu.oaklandstudent.medicalid.NFC
 
 class ByteArrayHexUtil {
     companion object {

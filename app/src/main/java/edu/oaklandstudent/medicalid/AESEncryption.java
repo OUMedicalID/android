@@ -1,10 +1,9 @@
-package com.lexycon.hostcardemulation;
+package edu.oaklandstudent.medicalid;
 // We can implement regular java and call it from the android classes such as Home or MainActivity for example.
 // We could have chosen to implement import java.util.Base64 but we will implement the android version as it has more benefits.
 
 
 import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 //import java.util.Base64;

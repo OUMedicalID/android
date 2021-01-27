@@ -1,4 +1,4 @@
-package com.lexycon.hostcardemulation;
+package edu.oaklandstudent.medicalid;
 
 import android.os.Bundle;
 
@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-
+import edu.oaklandstudent.medicalid.R;
 
 
 public class Home extends Fragment {

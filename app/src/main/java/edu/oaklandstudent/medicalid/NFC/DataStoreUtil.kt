@@ -1,4 +1,4 @@
-package com.lexycon.hostcardemulation.NFC
+package edu.oaklandstudent.medicalid.NFC
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE

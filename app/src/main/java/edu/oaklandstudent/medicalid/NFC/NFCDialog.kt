@@ -1,11 +1,11 @@
-package com.lexycon.hostcardemulation.NFC
+package edu.oaklandstudent.medicalid.NFC
 
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.provider.Settings
-import com.lexycon.hostcardemulation.R
+import edu.oaklandstudent.medicalid.R
 
 class NFCDialog(context: Context) {
     var context: Context = context;
