@@ -69,10 +69,10 @@ public class MainActivity extends AppCompatActivity {
                         case R.id.nav_home:
                             selectedFragment = new Home();
                             break;
-                        case R.id.nav_tab3:
+                        case R.id.nav_tab2:
                             selectedFragment = new Questions();
                             break;
-                        case R.id.nav_tab2:
+                        case R.id.nav_tab3:
                             selectedFragment = new Settings();
                             break;
                     }

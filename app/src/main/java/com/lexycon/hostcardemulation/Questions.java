@@ -1,5 +1,6 @@
 package com.lexycon.hostcardemulation;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,8 +34,8 @@ public class Questions extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View RootView = inflater.inflate(R.layout.questions, container, false);
 
+        View RootView = inflater.inflate(R.layout.questions, container, false);
         RecyclerView mRecyclerView = (RecyclerView) RootView.findViewById(R.id.recyclerViewX);
 
         FormBuildHelper formBuilder = new FormBuildHelper(new OnFormElementValueChangedListener() {
@@ -43,33 +44,39 @@ public class Questions extends Fragment {
                 Log.i("FirstForm", "Something in the form was changed.");
             }
         }, mRecyclerView);
-
         formBuilder.attachRecyclerView(mRecyclerView);
-
         // Declare our array list of elements
         List<BaseFormElement<?>> elements = new ArrayList<>();
-
         // declare first section (header +  various elements)
-        FormHeader header = new FormHeader("Personal Info");
+        FormHeader header = new FormHeader("Choose Information To Edit");
+
+        FormButtonElement personal = new FormButtonElement(4);
+        personal.setValue("Personal Information");
+        personal.getValueObservers().add(new Function2<String, BaseFormElement<String>, Unit>() {
+            @Override
+            public Unit invoke(String newValue, BaseFormElement<String> element) {
+
+                Intent myIntent = new Intent(Questions.this.getContext(), PersonalInformation.class);
+                startActivity(myIntent);
+
+                return Unit.INSTANCE;
+            }
+        });
+
+        FormButtonElement emergencyContacts = new FormButtonElement(5);
+        emergencyContacts.setValue("Emergency Contact Information");
+        emergencyContacts.getValueObservers().add(new Function2<String, BaseFormElement<String>, Unit>() {
+            @Override
+            public Unit invoke(String newValue, BaseFormElement<String> element) {
+                Log.v("Main", "The button was pressed.");
+                return Unit.INSTANCE;
+            }
+        });
 
 
-        FormSingleLineEditTextElement name = new FormSingleLineEditTextElement(1);
-        name.setHint("Full Name");
-        name.setTitle("Name");
-
-        FormPickerDateElement dob = new FormPickerDateElement(2);
-        dob.setDateValue(new Date()); // <-- Possibly don't include this.
-        dob.setDateFormat(new SimpleDateFormat("MM/dd/yyyy", Locale.US));
-        dob.setTitle("Date of Birth");
-
-        FormSingleLineEditTextElement street = new FormSingleLineEditTextElement(3);
-        street.setHint("Street");
-        street.setTitle("Street");
-
-        FormButtonElement button = new FormButtonElement(4);
-        button.setValue("Save Info");
-
-        button.getValueObservers().add(new Function2<String, BaseFormElement<String>, Unit>() {
+        FormButtonElement medicalConditions = new FormButtonElement(6);
+        medicalConditions.setValue("Medical Conditions");
+        medicalConditions.getValueObservers().add(new Function2<String, BaseFormElement<String>, Unit>() {
             @Override
             public Unit invoke(String newValue, BaseFormElement<String> element) {
                 Log.v("Main", "The button was pressed.");
@@ -78,17 +85,9 @@ public class Questions extends Fragment {
         });
 
         elements.add(header);
-        elements.add(name);
-        elements.add(dob);
-        elements.add(street);
-        elements.add(button);
-
-
-
-
-
-        
-
+        elements.add(personal);
+        elements.add(emergencyContacts);
+        elements.add(medicalConditions);
 
         formBuilder.addFormElements(elements);
 
