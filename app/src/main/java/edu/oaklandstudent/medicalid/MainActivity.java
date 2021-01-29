@@ -50,16 +50,7 @@ public class MainActivity extends AppCompatActivity {
                 new NFCDialog(this).showNFCUnsupported();
         }
 
-/*
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                Intent myIntent = new Intent(getApplicationContext(), Questions.class);
-                startActivity(myIntent);
-            }
-        }, 5000);
 
-*/
 
     }
     private BottomNavigationView.OnNavigationItemSelectedListener navListener =
