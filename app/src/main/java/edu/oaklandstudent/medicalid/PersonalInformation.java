@@ -272,6 +272,7 @@ public class PersonalInformation extends AppCompatActivity{
         if(AESEncryption.decrypt(prefs.getString("state", "")).equals("West Virginia")) state.setValue(new ListItem(48L, "West Virginia"));
         if(AESEncryption.decrypt(prefs.getString("state", "")).equals("Wisconsin")) state.setValue(new ListItem(49L, "Wisconsin"));
         if(AESEncryption.decrypt(prefs.getString("state", "")).equals("Wyoming")) state.setValue(new ListItem(50L, "Wyoming"));
+        if(AESEncryption.decrypt(prefs.getString("state", "")).equals("Other")) state.setValue(new ListItem(50L, "Other"));
         // Code to restore dob.
         String dobAsString = AESEncryption.decrypt(prefs.getString("dob", null));
         if(dobAsString != null) {
