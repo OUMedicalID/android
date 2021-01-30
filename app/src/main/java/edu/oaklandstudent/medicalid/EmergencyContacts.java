@@ -63,7 +63,7 @@ public class EmergencyContacts extends AppCompatActivity{
 
 
         // First contact
-        FormHeader header1 = new FormHeader("Emergency Contact 1");
+        final FormHeader header1 = new FormHeader("Emergency Contact 1");
 
         final FormSingleLineEditTextElement name1 = new FormSingleLineEditTextElement(1);
         name1.setHint("Full Name");
@@ -79,7 +79,7 @@ public class EmergencyContacts extends AppCompatActivity{
 
 
         // First contact
-        FormHeader header2 = new FormHeader("Emergency Contact 2");
+        final FormHeader header2 = new FormHeader("Emergency Contact 2");
 
         final FormSingleLineEditTextElement name2 = new FormSingleLineEditTextElement(4);
         name2.setHint("Full Name");
@@ -115,6 +115,19 @@ public class EmergencyContacts extends AppCompatActivity{
             @Override
             public Unit invoke(String newValue, BaseFormElement<String> element) {
 
+                SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = prefs.edit();
+
+                editor.putString("header1", AESEncryption.encrypt(header1.getValue()));
+                editor.putString("name1", AESEncryption.encrypt(name1.getValue()));
+                editor.putString("phone1", AESEncryption.encrypt(phone1.getValue()));
+                editor.putString("rel1", AESEncryption.encrypt(rel1.getValue()));
+                editor.putString("header2", AESEncryption.encrypt(header2.getValue()));
+                editor.putString("name2", AESEncryption.encrypt(name2.getValue()));
+                editor.putString("phone2", AESEncryption.encrypt(phone2.getValue()));
+                editor.putString("rel2", AESEncryption.encrypt(rel2.getValue()));
+
+                editor.apply();
                 Log.v("Main", "The button was pressed.");
                 return Unit.INSTANCE;
             }
@@ -123,6 +136,18 @@ public class EmergencyContacts extends AppCompatActivity{
         elements.add(save);
         formBuilder.addFormElements(elements);
         // formBuilder.
+
+        SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        header1.setValue(AESEncryption.decrypt(prefs.getString("header1", null)));
+        name1.setValue(AESEncryption.decrypt(prefs.getString("name1", null)));
+        phone1.setValue(AESEncryption.decrypt(prefs.getString("phone1", null)));
+        rel1.setValue(AESEncryption.decrypt(prefs.getString("rel1", null)));
+        header2.setValue(AESEncryption.decrypt(prefs.getString("header2", null)));
+        name2.setValue(AESEncryption.decrypt(prefs.getString("name2", null)));
+        phone2.setValue(AESEncryption.decrypt(prefs.getString("phone2", null)));
+        rel2.setValue(AESEncryption.decrypt(prefs.getString("rel2", null)));
+
 
 
 
