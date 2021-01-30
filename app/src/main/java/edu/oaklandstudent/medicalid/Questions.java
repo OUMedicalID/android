@@ -64,7 +64,10 @@ public class Questions extends Fragment {
         emergencyContacts.getValueObservers().add(new Function2<String, BaseFormElement<String>, Unit>() {
             @Override
             public Unit invoke(String newValue, BaseFormElement<String> element) {
-                Log.v("Main", "The button was pressed.");
+
+                Intent myIntent = new Intent(Questions.this.getContext(), EmergencyContacts.class);
+                startActivity(myIntent);
+
                 return Unit.INSTANCE;
             }
         });
