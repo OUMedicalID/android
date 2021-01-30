@@ -74,7 +74,7 @@ public class PersonalInformation extends AppCompatActivity{
 
         final FormPickerDateElement dob = new FormPickerDateElement(2);
         //dob.setDateValue(new Date());
-        // dob.setDateFormat(new SimpleDateFormat("MM/dd/yyyy", Locale.US));
+        dob.setDateFormat(new SimpleDateFormat("MM/dd/yyyy", Locale.US));
         dob.setTitle("Date of Birth");
         dob.setHint("Click to Select");
 
@@ -274,6 +274,8 @@ public class PersonalInformation extends AppCompatActivity{
         if(AESEncryption.decrypt(prefs.getString("state", "")).equals("Wyoming")) state.setValue(new ListItem(50L, "Wyoming"));
         if(AESEncryption.decrypt(prefs.getString("state", "")).equals("Other")) state.setValue(new ListItem(50L, "Other"));
         // Code to restore dob.
+
+
         String dobAsString = AESEncryption.decrypt(prefs.getString("dob", null));
         if(dobAsString != null) {
             DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
