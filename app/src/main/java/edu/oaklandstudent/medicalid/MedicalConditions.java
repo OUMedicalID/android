@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -84,7 +85,10 @@ public class MedicalConditions extends AppCompatActivity{
                 List<BaseFormElement<?>> elements2 = new ArrayList<>();
                 elements2.add(cond);
                 formBuilder.addFormElements(elements2);
-
+                //Tried to find what "cond" is stored as so I could use the editor.remove method on it
+                for(int i = 0;i < elements2.size();i++){
+                    Log.v("Main", "The value of " + i + " is: " );
+                }
                 Log.v("Main", "The button was pressed.");
                 return Unit.INSTANCE;
             }
@@ -98,7 +102,7 @@ public class MedicalConditions extends AppCompatActivity{
             @Override
             public Unit invoke(String newValue, BaseFormElement<String> element) {
 
-                showDialog();
+                showDialog(formBuilder);
 /*
                 final CharSequence[] items = {"cat1","cat2","cat3" };
                 AlertDialog.Builder builder = new AlertDialog.Builder(MedicalConditions.this.getApplicationContext());
@@ -160,7 +164,6 @@ public class MedicalConditions extends AppCompatActivity{
                     catch(NoSuchElementException e){
                     }
                 }
-
                 editor.putStringSet("mConditions", mConditions);
                 editor.apply();
 
@@ -212,13 +215,37 @@ public class MedicalConditions extends AppCompatActivity{
     }
 
 
-    String[] items = new String[]{"Back Pain","Shoulder Pain","1","Back Pain","Shoulder Pain","1","Back Pain","Shoulder Pain","1","Back Pain","Shoulder Pain","1", "bbb","bbb","bbb"};
-    boolean selected[] = new boolean[]{false, false, false, false, false, false,false, false, false,false, false, false,false, false, false};
+    //String[] items = new String[]{"Back Pain","Shoulder Pain","1","Back Pain","Shoulder Pain","1","Back Pain","Shoulder Pain","1","Back Pain","Shoulder Pain","1", "bbb","bbb","bbb"};
+    //boolean selected[] = new boolean[]{false, false, false, false, false, false,false, false, false,false, false, false,false, false, false};
 
-    private void showDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Something");
-        builder.setMultiChoiceItems(items, selected, new DialogInterface.OnMultiChoiceClickListener() {
+    private void showDialog(final FormBuildHelper formbuilder) {
+        SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
+        final SharedPreferences.Editor editor = prefs.edit();
+        final Set<String> mConditions = prefs.getStringSet("mConditions", null);
+        final String[] conditionArray = new String[mConditions.size()];
+        final boolean selected[] = new boolean[mConditions.size()];
+        int count = 0;
+        if(mConditions == null) return;
+        if(mConditions.isEmpty()) return;
+
+        for (String s : mConditions) {
+            conditionArray[count] = s;
+            count++;
+        }
+        for(int j = 0; j < selected.length;j++){
+            selected[j] = false;
+        }
+        /*
+        This can be used to check the keys in mConditions
+
+        Map<String,?> keys = prefs.getAll();
+        for(Map.Entry<String,?> entry : keys.entrySet()){
+            Log.d("map values",entry.getKey() + ": " + entry.getValue().toString());
+        }
+        */
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Conditions Saved");
+        builder.setMultiChoiceItems(conditionArray, selected, new DialogInterface.OnMultiChoiceClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
@@ -249,8 +276,12 @@ public class MedicalConditions extends AppCompatActivity{
         builder.setPositiveButton("Remove", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-
-
+                //Removes everything in mConditions
+                editor.remove("mConditions");
+                //Removes the element but only works when backspacing out of the page and going back in
+                mConditions.remove(formbuilder.getFormElement(5).getValueAsString());
+                editor.commit();
+                editor.apply();
                 // Remove what was checked.
 
 
