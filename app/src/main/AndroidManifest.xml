@@ -18,6 +18,7 @@
         <!--<activity android:name=".Questions"></activity>-->
         <activity android:name="edu.oaklandstudent.medicalid.PersonalInformation"></activity>
         <activity android:name="edu.oaklandstudent.medicalid.EmergencyContacts"></activity>
+        <activity android:name="edu.oaklandstudent.medicalid.MedicalConditions"></activity>
         <activity android:name="edu.oaklandstudent.medicalid.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

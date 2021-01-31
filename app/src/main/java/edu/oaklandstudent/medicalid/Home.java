@@ -1,5 +1,7 @@
 package edu.oaklandstudent.medicalid;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -8,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.util.Random;
 
@@ -31,6 +34,22 @@ public class Home extends Fragment {
         params.height = 510;
         // existing height is ok as is, no need to edit it
         iv.setLayoutParams(params);
+
+        TextView tv1 = (TextView)RootView.findViewById(R.id.personName);
+
+        SharedPreferences prefs = RootView.getContext().getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+
+
+        String name = AESEncryption.decrypt(prefs.getString("name", null));
+        if(name != null) {
+            tv1.setText("Welcome, " + name + "!");
+        }else{
+            tv1.setText("Welcome!");
+        }
+
+
+
 
         return RootView;
     }
