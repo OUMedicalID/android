@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -103,36 +104,6 @@ public class MedicalConditions extends AppCompatActivity{
             public Unit invoke(String newValue, BaseFormElement<String> element) {
 
                 showDialog(formBuilder);
-/*
-                final CharSequence[] items = {"cat1","cat2","cat3" };
-                AlertDialog.Builder builder = new AlertDialog.Builder(MedicalConditions.this.getApplicationContext());
-                builder.setTitle("Categories");
-                builder.setSingleChoiceItems(items , -1,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                // The 'which' argument contains the index position
-                                // of the selected item
-                            }
-                        });
-                builder.setItems(items, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int item) {
-                        switch (item) {
-                            case 0:
-                                //handle item1
-                                break;
-                            case 1:
-                                //item2
-                                break;
-                            case 2:
-                                //item3
-                                break;
-                            default:
-                                break;
-                        }  }
-                });
-                AlertDialog alert = builder.create();
-                alert.show();
-*/
 
                 Log.v("Main", "Delete button was pressed.");
                 return Unit.INSTANCE;
@@ -151,23 +122,27 @@ public class MedicalConditions extends AppCompatActivity{
 
                 Set<String> mConditions = prefs.getStringSet("mConditions", null);
                 if(mConditions == null) mConditions = new HashSet<String>();
-
-
                 if(latestTagID() == -1)return Unit.INSTANCE;
+
+                Set<String> mConditions2 = new HashSet<String>();
+                for (String s : mConditions) {
+                    mConditions2.add(s);
+                }
 
                 for(int i=4;i<=latestTagID(); i++){
                     try {
-                        Log.wtf("OUG45",formBuilder.getFormElement(i).getValueAsString());
-                        mConditions.add(formBuilder.getFormElement(i).getValueAsString());
+                        Log.wtf("OUG45","Saving "+formBuilder.getFormElement(i).getValueAsString());
+                        mConditions2.add(formBuilder.getFormElement(i).getValueAsString());
                     }
                     //handling the exception
                     catch(NoSuchElementException e){
                     }
                 }
-                editor.putStringSet("mConditions", mConditions);
+                editor.putStringSet("mConditions", mConditions2);
                 editor.apply();
+                editor.commit();
 
-                Log.v("Main", "Delete button was pressed.");
+                Log.wtf("OUG45", "Save button was pressed.");
                 return Unit.INSTANCE;
             }
         });
@@ -210,21 +185,21 @@ public class MedicalConditions extends AppCompatActivity{
             cond.setValue(s);
             List<BaseFormElement<?>> elements2 = new ArrayList<>();
             elements2.add(cond);
-           formBuilder.addFormElements(elements2);
+            formBuilder.addFormElements(elements2);
         }
     }
 
 
-    //String[] items = new String[]{"Back Pain","Shoulder Pain","1","Back Pain","Shoulder Pain","1","Back Pain","Shoulder Pain","1","Back Pain","Shoulder Pain","1", "bbb","bbb","bbb"};
-    //boolean selected[] = new boolean[]{false, false, false, false, false, false,false, false, false,false, false, false,false, false, false};
-
     private void showDialog(final FormBuildHelper formbuilder) {
+
         SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
         final SharedPreferences.Editor editor = prefs.edit();
+
         final Set<String> mConditions = prefs.getStringSet("mConditions", null);
         final String[] conditionArray = new String[mConditions.size()];
         final boolean selected[] = new boolean[mConditions.size()];
         int count = 0;
+
         if(mConditions == null) return;
         if(mConditions.isEmpty()) return;
 
@@ -235,14 +210,9 @@ public class MedicalConditions extends AppCompatActivity{
         for(int j = 0; j < selected.length;j++){
             selected[j] = false;
         }
-        /*
-        This can be used to check the keys in mConditions
 
-        Map<String,?> keys = prefs.getAll();
-        for(Map.Entry<String,?> entry : keys.entrySet()){
-            Log.d("map values",entry.getKey() + ": " + entry.getValue().toString());
-        }
-        */
+
+
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Conditions Saved");
         builder.setMultiChoiceItems(conditionArray, selected, new DialogInterface.OnMultiChoiceClickListener() {
@@ -251,21 +221,15 @@ public class MedicalConditions extends AppCompatActivity{
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
 
                 Log.wtf("OUG45"," WE CLICKED "+String.valueOf(which));
-
                 for (int i = 0; i < selected.length; i++) {
                     if (i == which) {
                         selected[i]=true;
-                        //((AlertDialog) dialog).getListView().setItemChecked(i, true);
-                    }
-                    else {
+                    }else {
                         selected[i]=false;
-                        //((AlertDialog) dialog).getListView().setItemChecked(i, false);
                     }
                 }
             }
-
         });
-
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -273,17 +237,33 @@ public class MedicalConditions extends AppCompatActivity{
             }
         });
 
+
+
+
         builder.setPositiveButton("Remove", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                //Removes everything in mConditions
-                editor.remove("mConditions");
-                //Removes the element but only works when backspacing out of the page and going back in
-                mConditions.remove(formbuilder.getFormElement(5).getValueAsString());
-                editor.commit();
-                editor.apply();
-                // Remove what was checked.
 
+                Set<String> newConditionsList = new HashSet<String>();
+
+                // Per https://stackoverflow.com/questions/49964074/removing-items-from-string-set-in-shared-preferences-not-persisting-across-app-r?noredirect=1&lq=1
+                // When adding or removing from a string set, we for some reason cannot use the list that we get back from SharedPreferences as it seems to resists commits.
+                // Instead, we take the string set we're given, load all elements in a new string set, and then save that as the new one.
+
+                int k=0;
+                for (boolean b : selected) {
+                    if(!b) newConditionsList.add(conditionArray[k]);
+                    k++;
+                }
+                editor.putStringSet("mConditions", newConditionsList);
+                editor.commit();
+
+
+                // After making the deletions, it is much easier to reload the page than to try removing the now deleted elements from the view while keeping everything else.
+                Intent intent = getIntent();
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                finish();
+                startActivity(intent);
 
                 dialogInterface.dismiss();
             }
