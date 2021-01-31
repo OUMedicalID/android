@@ -16,8 +16,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.NoSuchElementException;
+import java.util.Set;
 
 import edu.oaklandstudent.medicalid.R;
 import kotlin.Unit;
@@ -38,6 +41,10 @@ import com.thejuki.kformmaster.helper.FormBuildHelper;
 
 public class MedicalConditions extends AppCompatActivity{
 
+    public List<BaseFormElement<?>> elements = new ArrayList<>();
+    public final FormHeader header1 = new FormHeader("Medical Conditions");
+    public int newID = 4;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +55,6 @@ public class MedicalConditions extends AppCompatActivity{
 
         // initialize variables
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewic);
-
         final FormBuildHelper formBuilder = new FormBuildHelper(new OnFormElementValueChangedListener() {
             @Override
             public void onValueChanged(BaseFormElement baseFormElement) {
@@ -56,36 +62,28 @@ public class MedicalConditions extends AppCompatActivity{
             }
         }, mRecyclerView);
 
+
         formBuilder.attachRecyclerView(mRecyclerView);
 
-        // Declare our array list of elements
-        final List<BaseFormElement<?>> elements = new ArrayList<>();
-
-        // First contact
-        final FormHeader header1 = new FormHeader("Medical Conditions");
 
 
 
 
 
 
-
-
-        FormButtonElement save = new FormButtonElement(4);
-        save.setValue("Add New Condition");
-        save.getValueObservers().add(new Function2<String, BaseFormElement<String>, Unit>() {
+        FormButtonElement addnew = new FormButtonElement(1);
+        addnew.setValue("Add New Condition");
+        addnew.getValueObservers().add(new Function2<String, BaseFormElement<String>, Unit>() {
             @Override
             public Unit invoke(String newValue, BaseFormElement<String> element) {
-
-                final FormSingleLineEditTextElement name2 = new FormSingleLineEditTextElement(1);
-                name2.setHint("Condition Description");
-                name2.setTitle("Condition");
-
-                elements.add(name2);
-                formBuilder.addFormElements(elements);
-
-
-
+                int newTagId = getNewTagID();
+                Log.wtf("OUG45","Created "+String.valueOf(newTagId));
+                final FormSingleLineEditTextElement cond = new FormSingleLineEditTextElement(newTagId);
+                cond.setHint("Medical Condition");
+                cond.setTitle("Condition");
+                List<BaseFormElement<?>> elements2 = new ArrayList<>();
+                elements2.add(cond);
+                formBuilder.addFormElements(elements2);
 
                 Log.v("Main", "The button was pressed.");
                 return Unit.INSTANCE;
@@ -94,23 +92,173 @@ public class MedicalConditions extends AppCompatActivity{
 
 
 
+        FormButtonElement delete = new FormButtonElement(2);
+        delete.setValue("Delete A Condition");
+        delete.getValueObservers().add(new Function2<String, BaseFormElement<String>, Unit>() {
+            @Override
+            public Unit invoke(String newValue, BaseFormElement<String> element) {
 
+                showDialog();
+/*
+                final CharSequence[] items = {"cat1","cat2","cat3" };
+                AlertDialog.Builder builder = new AlertDialog.Builder(MedicalConditions.this.getApplicationContext());
+                builder.setTitle("Categories");
+                builder.setSingleChoiceItems(items , -1,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // The 'which' argument contains the index position
+                                // of the selected item
+                            }
+                        });
+                builder.setItems(items, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int item) {
+                        switch (item) {
+                            case 0:
+                                //handle item1
+                                break;
+                            case 1:
+                                //item2
+                                break;
+                            case 2:
+                                //item3
+                                break;
+                            default:
+                                break;
+                        }  }
+                });
+                AlertDialog alert = builder.create();
+                alert.show();
+*/
+
+                Log.v("Main", "Delete button was pressed.");
+                return Unit.INSTANCE;
+            }
+        });
+
+
+        FormButtonElement save = new FormButtonElement(3);
+        save.setValue("Save Conditions");
+        save.getValueObservers().add(new Function2<String, BaseFormElement<String>, Unit>() {
+            @Override
+            public Unit invoke(String newValue, BaseFormElement<String> element) {
+
+                SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = prefs.edit();
+
+                Set<String> mConditions = prefs.getStringSet("mConditions", null);
+                if(mConditions == null) mConditions = new HashSet<String>();
+
+
+                if(latestTagID() == -1)return Unit.INSTANCE;
+
+                for(int i=4;i<=latestTagID(); i++){
+                    try {
+                        Log.wtf("OUG45",formBuilder.getFormElement(i).getValueAsString());
+                        mConditions.add(formBuilder.getFormElement(i).getValueAsString());
+                    }
+                    //handling the exception
+                    catch(NoSuchElementException e){
+                    }
+                }
+
+                editor.putStringSet("mConditions", mConditions);
+                editor.apply();
+
+                Log.v("Main", "Delete button was pressed.");
+                return Unit.INSTANCE;
+            }
+        });
+
+
+        elements.add(addnew);
+        elements.add(delete);
+        elements.add(save);
         elements.add(header1);
-
-        elements2.add(save);
-
         formBuilder.addFormElements(elements);
 
+        restore(formBuilder);
+    }
+
+    public int getNewTagID(){
+        newID++;
+        return newID;
 
     }
 
+    public int latestTagID(){
+        return newID;
+    }
 
-    public void restore(){
+    public void restore(FormBuildHelper formBuilder){
+        SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        Set<String> mConditions = prefs.getStringSet("mConditions", null);
 
-        String[] conditions = {"Back Pain", "Shoulder Pain"};
+        if(mConditions == null) return;
+        if(mConditions.isEmpty()) return;
 
 
+        for (String s : mConditions) {
 
+            int newTagId = getNewTagID();
+            final FormSingleLineEditTextElement cond = new FormSingleLineEditTextElement(newTagId);
+            cond.setHint("Medical Condition");
+            cond.setTitle("Condition");
+            cond.setValue(s);
+            List<BaseFormElement<?>> elements2 = new ArrayList<>();
+            elements2.add(cond);
+           formBuilder.addFormElements(elements2);
+        }
+    }
+
+
+    String[] items = new String[]{"Back Pain","Shoulder Pain","1","Back Pain","Shoulder Pain","1","Back Pain","Shoulder Pain","1","Back Pain","Shoulder Pain","1", "bbb","bbb","bbb"};
+    boolean selected[] = new boolean[]{false, false, false, false, false, false,false, false, false,false, false, false,false, false, false};
+
+    private void showDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Something");
+        builder.setMultiChoiceItems(items, selected, new DialogInterface.OnMultiChoiceClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+
+                Log.wtf("OUG45"," WE CLICKED "+String.valueOf(which));
+
+                for (int i = 0; i < selected.length; i++) {
+                    if (i == which) {
+                        selected[i]=true;
+                        //((AlertDialog) dialog).getListView().setItemChecked(i, true);
+                    }
+                    else {
+                        selected[i]=false;
+                        //((AlertDialog) dialog).getListView().setItemChecked(i, false);
+                    }
+                }
+            }
+
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+
+        builder.setPositiveButton("Remove", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+
+                // Remove what was checked.
+
+
+                dialogInterface.dismiss();
+            }
+        });
+
+        builder.show();
     }
 
 
