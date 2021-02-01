@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-import edu.oaklandstudent.medicalid.R;
 import com.thejuki.kformmaster.listener.OnFormElementValueChangedListener;
 import com.thejuki.kformmaster.model.BaseFormElement;
 import com.thejuki.kformmaster.model.FormButtonElement;
@@ -32,7 +31,7 @@ public class Questions extends Fragment {
 
 
         View RootView = inflater.inflate(R.layout.questions, container, false);
-        RecyclerView mRecyclerView = (RecyclerView) RootView.findViewById(R.id.recyclerViewX);
+        RecyclerView mRecyclerView = (RecyclerView) RootView.findViewById(R.id.passwordView);
 
         FormBuildHelper formBuilder = new FormBuildHelper(new OnFormElementValueChangedListener() {
             @Override
