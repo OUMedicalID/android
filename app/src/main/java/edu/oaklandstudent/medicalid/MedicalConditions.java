@@ -8,9 +8,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -22,6 +29,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Random;
 import java.util.Set;
 
 import edu.oaklandstudent.medicalid.R;
@@ -45,7 +53,7 @@ public class MedicalConditions extends AppCompatActivity{
 
     public List<BaseFormElement<?>> elements = new ArrayList<>();
     public final FormHeader header1 = new FormHeader("Medical Conditions");
-    public int newID = 4;
+    public int newID = 0;
 
 
     @Override
@@ -73,11 +81,24 @@ public class MedicalConditions extends AppCompatActivity{
 
 
 
-        FormButtonElement addnew = new FormButtonElement(1);
+        FormButtonElement addnew = new FormButtonElement();
         addnew.setValue("Add New Condition");
         addnew.getValueObservers().add(new Function2<String, BaseFormElement<String>, Unit>() {
             @Override
             public Unit invoke(String newValue, BaseFormElement<String> element) {
+
+
+
+
+
+
+                try {
+                    String latest = formBuilder.getFormElement(latestTagID()).getValueAsString();
+                    if (latest == null || latest.equals("")) return null;
+                }catch(final NoSuchElementException ex) {}
+
+
+
                 int newTagId = getNewTagID();
                 Log.wtf("OUG45","Created "+String.valueOf(newTagId));
                 final FormSingleLineEditTextElement cond = new FormSingleLineEditTextElement(newTagId);
@@ -85,11 +106,21 @@ public class MedicalConditions extends AppCompatActivity{
                 cond.setTitle("Condition");
                 List<BaseFormElement<?>> elements2 = new ArrayList<>();
                 elements2.add(cond);
-                formBuilder.addFormElements(elements2);
-                //Tried to find what "cond" is stored as so I could use the editor.remove method on it
-                for(int i = 0;i < elements2.size();i++){
-                    Log.v("Main", "The value of " + i + " is: " );
-                }
+
+                formBuilder.addFormElement(cond);
+                formBuilder.setItems();
+
+                /* Wait 200 milliseconds and attempt the restore.
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        saveData(formBuilder); // Save everything for our attempt to bring original values back.
+                        attemptFix(formBuilder);
+                    }
+                }, 200);
+               */
+
+
                 Log.v("Main", "The button was pressed.");
                 return Unit.INSTANCE;
             }
@@ -97,7 +128,7 @@ public class MedicalConditions extends AppCompatActivity{
 
 
 
-        FormButtonElement delete = new FormButtonElement(2);
+        FormButtonElement delete = new FormButtonElement();
         delete.setValue("Delete A Condition");
         delete.getValueObservers().add(new Function2<String, BaseFormElement<String>, Unit>() {
             @Override
@@ -111,36 +142,13 @@ public class MedicalConditions extends AppCompatActivity{
         });
 
 
-        FormButtonElement save = new FormButtonElement(3);
+        FormButtonElement save = new FormButtonElement();
         save.setValue("Save Conditions");
         save.getValueObservers().add(new Function2<String, BaseFormElement<String>, Unit>() {
             @Override
             public Unit invoke(String newValue, BaseFormElement<String> element) {
 
-                SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = prefs.edit();
-
-                Set<String> mConditions = prefs.getStringSet("mConditions", null);
-                if(mConditions == null) mConditions = new HashSet<String>();
-                if(latestTagID() == -1)return Unit.INSTANCE;
-
-                Set<String> mConditions2 = new HashSet<String>();
-                for (String s : mConditions) {
-                    mConditions2.add(s);
-                }
-
-                for(int i=4;i<=latestTagID(); i++){
-                    try {
-                        Log.wtf("OUG45","Saving "+formBuilder.getFormElement(i).getValueAsString());
-                        mConditions2.add(formBuilder.getFormElement(i).getValueAsString());
-                    }
-                    //handling the exception
-                    catch(NoSuchElementException e){
-                    }
-                }
-                editor.putStringSet("mConditions", mConditions2);
-                editor.apply();
-                editor.commit();
+                saveData(formBuilder);
 
                 Log.wtf("OUG45", "Save button was pressed.");
                 return Unit.INSTANCE;
@@ -158,7 +166,7 @@ public class MedicalConditions extends AppCompatActivity{
     }
 
     public int getNewTagID(){
-        newID++;
+        ++newID;
         return newID;
 
     }
@@ -183,6 +191,7 @@ public class MedicalConditions extends AppCompatActivity{
             cond.setHint("Medical Condition");
             cond.setTitle("Condition");
             cond.setValue(s);
+
             List<BaseFormElement<?>> elements2 = new ArrayList<>();
             elements2.add(cond);
             formBuilder.addFormElements(elements2);
@@ -221,12 +230,10 @@ public class MedicalConditions extends AppCompatActivity{
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
 
                 Log.wtf("OUG45"," WE CLICKED "+String.valueOf(which));
-                for (int i = 0; i < selected.length; i++) {
-                    if (i == which) {
-                        selected[i]=true;
-                    }else {
-                        selected[i]=false;
-                    }
+                if(isChecked){
+                    selected[which] = true;
+                } else {
+                    selected[which] = false;
                 }
             }
         });
@@ -270,6 +277,74 @@ public class MedicalConditions extends AppCompatActivity{
         });
 
         builder.show();
+    }
+
+
+    public void saveData(final FormBuildHelper formBuilder){
+        SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        Set<String> mConditions = prefs.getStringSet("mConditions", null);
+        if(mConditions == null) mConditions = new HashSet<String>();
+        if(latestTagID() == -1)return;
+
+        Set<String> mConditions2 = new HashSet<String>();
+        for (String s : mConditions) {
+            if(s.equals(""))continue;
+            mConditions2.add(s);
+        }
+
+        for(int i=0;i<=latestTagID(); i++){
+            try {
+                Log.wtf("OUG45","Saving "+formBuilder.getFormElement(i).getValueAsString());
+                mConditions2.add(formBuilder.getFormElement(i).getValueAsString());
+            }
+            //handling the exception
+            catch(NoSuchElementException e){
+            }
+        }
+        editor.putStringSet("mConditions", mConditions2);
+        editor.apply();
+        editor.commit();
+    }
+
+
+    public void attemptFix(FormBuildHelper formBuilder){
+        // Attempt to prevent overwriting of previous conditions.
+        SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
+        Set<String> mConditions = prefs.getStringSet("mConditions", null);
+        if(mConditions == null) return;
+        if(mConditions.isEmpty()) return;
+        int m = 1;
+        for (String s : mConditions) {
+            try {
+                if(s.equals(""))continue;
+                Log.wtf("OUG45","Restoring "+String.valueOf(m)+ " with "+s);
+                formBuilder.getFormElement(m).setValue(s);
+            } catch (NoSuchElementException e) {
+                Log.wtf("OUG45","Failed "+String.valueOf(m)+ " with "+s);
+            }
+            ++m;
+        }
+    }
+
+
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if ( v instanceof EditText) {
+                Rect outRect = new Rect();
+                v.getGlobalVisibleRect(outRect);
+                if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
+                    v.clearFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
+            }
+        }
+        return super.dispatchTouchEvent( event );
     }
 
 
