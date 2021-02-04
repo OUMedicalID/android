@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,8 +17,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.NoSuchElementException;
+import java.util.Set;
 
 import edu.oaklandstudent.medicalid.R;
 import kotlin.Unit;
@@ -36,7 +40,10 @@ import com.thejuki.kformmaster.helper.FormBuildHelper;
 
 
 public class PersonalInformation extends AppCompatActivity{
-
+    public List<BaseFormElement<?>> elements = new ArrayList<>();
+    public final FormHeader header1 = new FormHeader("Accident/Injury Info");
+    public final FormHeader header2 = new FormHeader("Primary Insurance");
+    public int newID = 4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +55,7 @@ public class PersonalInformation extends AppCompatActivity{
         // initialize variables
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewic);
 
-        FormBuildHelper formBuilder = new FormBuildHelper(new OnFormElementValueChangedListener() {
+        final FormBuildHelper formBuilder = new FormBuildHelper(new OnFormElementValueChangedListener() {
             @Override
             public void onValueChanged(BaseFormElement baseFormElement) {
                 Log.i("FirstForm", "Something in the form was changed.");
@@ -138,6 +145,28 @@ public class PersonalInformation extends AppCompatActivity{
         ethnicity.setHint("Optional");
         ethnicity.setTitle("Ethnicity");
 
+        final FormPickerDropDownElement<ListItem> maritalStatus = new FormPickerDropDownElement<>(13);
+        maritalStatus.setDialogTitle("Marital Status");
+        maritalStatus.setOptions(Arrays.asList(new ListItem(1L, "Single"), new ListItem(2L, "Married"), new ListItem(3L, "Unmarried")));
+        maritalStatus.setTitle("Select Marital Status");
+        maritalStatus.setHint("Click to Select");
+
+        final FormSingleLineEditTextElement primaryInsurance = new FormSingleLineEditTextElement(14);
+        primaryInsurance.setHint("Primary Insurance Name");
+        primaryInsurance.setTitle("Name");
+
+        final FormSingleLineEditTextElement primaryInsuranceNumber = new FormSingleLineEditTextElement(15);
+        primaryInsuranceNumber.setHint("Policy/Id Number");
+        primaryInsuranceNumber.setTitle("Number");
+
+        final FormSingleLineEditTextElement primaryInsuranceGroupNumber = new FormSingleLineEditTextElement(16);
+        primaryInsuranceGroupNumber.setHint("Primary Insurance Group Number");
+        primaryInsuranceGroupNumber.setTitle("Group Number");
+
+        final FormSingleLineEditTextElement primaryInsurancePolicyHolder = new FormSingleLineEditTextElement(17);
+        primaryInsurancePolicyHolder.setHint("Primary Insurance Policy Holder");
+        primaryInsurancePolicyHolder.setTitle("Policy Holder");
+
         FormButtonElement save = new FormButtonElement(4);
         save.setValue("Save Personal Information");
         save.getValueObservers().add(new Function2<String, BaseFormElement<String>, Unit>() {
@@ -162,12 +191,17 @@ public class PersonalInformation extends AppCompatActivity{
                 editor.putString("height", AESEncryption.encrypt(height.getValue()));
                 editor.putString("bloodType", AESEncryption.encrypt(bloodType.getValueAsString()));
                 editor.putString("ethnicity", AESEncryption.encrypt(ethnicity.getValue()));
+                editor.putString("maritalStatus",AESEncryption.encrypt(maritalStatus.getValueAsString()));
+                editor.putString("primaryInsurance",AESEncryption.encrypt(primaryInsurance.getValueAsString()));
+                editor.putString("primaryInsuranceNumber",AESEncryption.encrypt(primaryInsuranceNumber.getValueAsString()));
+                editor.putString("primaryInsuranceGroupNumber",AESEncryption.encrypt(primaryInsuranceGroupNumber.getValueAsString()));
+                editor.putString("primaryInsurancePolicyHolder",AESEncryption.encrypt(primaryInsurancePolicyHolder.getValueAsString()));
 
                 //Log.wtf("OUS45", "Gender ID is "+gender.getId());
                 //Log.wtf("OUS45", "Gender Tag is "+gender.getTag());
                 //Log.wtf("OUS45", "Gender val is "+gender.getValue());
                 //Log.wtf("OUS45", "Gender valas is "+gender.getValueAsString());
-
+                editor.commit();
                 editor.apply();
                 Log.v("Main", "The button was pressed." +
                         "\n");
@@ -189,8 +223,12 @@ public class PersonalInformation extends AppCompatActivity{
         elements.add(height);
         elements.add(bloodType);
         elements.add(ethnicity);
-
-
+        elements.add(maritalStatus);
+        elements.add(header2);
+        elements.add(primaryInsurance);
+        elements.add(primaryInsuranceNumber);
+        elements.add(primaryInsuranceGroupNumber);
+        elements.add(primaryInsurancePolicyHolder);
 
 
         elements.add(save);
@@ -212,6 +250,14 @@ public class PersonalInformation extends AppCompatActivity{
         weight.setValue(AESEncryption.decrypt(prefs.getString("weight",null)));
         height.setValue(AESEncryption.decrypt(prefs.getString("height",null)));
         ethnicity.setValue(AESEncryption.decrypt(prefs.getString("ethnicity",null)));
+        primaryInsurance.setValue(AESEncryption.decrypt(prefs.getString("primaryInsurance",null)));
+        primaryInsuranceNumber.setValue(AESEncryption.decrypt(prefs.getString("primaryInsuranceNumber",null)));
+        primaryInsuranceGroupNumber.setValue(AESEncryption.decrypt(prefs.getString("primaryInsuranceGroupNumber",null)));
+        primaryInsurancePolicyHolder.setValue(AESEncryption.decrypt(prefs.getString("primaryInsurancePolicyHolder",null)));
+
+        if(AESEncryption.decrypt(prefs.getString("maritalStatus", "")).equals("Single")) maritalStatus.setValue(new ListItem(1L, "Single"));
+        if(AESEncryption.decrypt(prefs.getString("maritalStatus", "")).equals("Married")) maritalStatus.setValue(new ListItem(2L, "Married"));
+        if(AESEncryption.decrypt(prefs.getString("maritalStatus", "")).equals("Unmarried")) maritalStatus.setValue(new ListItem(3L, "Unmarried"));
 
         if(AESEncryption.decrypt(prefs.getString("gender", "")).equals("Male")) gender.setValue(new ListItem(1L, "Male"));
         if(AESEncryption.decrypt(prefs.getString("gender", "")).equals("Female")) gender.setValue(new ListItem(2L, "Female"));
@@ -288,9 +334,5 @@ public class PersonalInformation extends AppCompatActivity{
             }
             dob.setDateFormat(new SimpleDateFormat("MM/dd/yyyy", Locale.US));
         }
-
-
     }
-
-
 }
