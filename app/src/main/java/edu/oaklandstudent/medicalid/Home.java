@@ -26,6 +26,7 @@ public class Home extends Fragment {
 
 
 
+
         View RootView = inflater.inflate(R.layout.home, container, false);
         ImageView iv = (ImageView)RootView.findViewById(R.id.happyPic);
         iv.setImageResource(myImageList[new Random().nextInt(myImageList.length)]);

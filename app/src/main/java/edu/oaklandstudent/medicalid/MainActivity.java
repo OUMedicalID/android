@@ -4,11 +4,18 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.nfc.NfcAdapter;
+import android.text.InputType;
+import android.util.Log;
 import android.view.MenuItem;
+import android.widget.EditText;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.thejuki.kformmaster.model.FormPasswordEditTextElement;
+
 import edu.oaklandstudent.medicalid.NFC.DataStoreUtil;
 import edu.oaklandstudent.medicalid.NFC.NFCDialog;
 
@@ -16,10 +23,49 @@ import edu.oaklandstudent.medicalid.R;
 
 public class MainActivity extends AppCompatActivity {
 
+    FormPasswordEditTextElement x = new FormPasswordEditTextElement();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        final password pass = new password();
+        x.setValue("");
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Password");
+            builder.setCancelable(false);
+
+// Set up the input
+            final EditText input = new EditText(this);
+// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            builder.setView(input);
+
+// Set up the buttons
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                     String m_Text = input.getText().toString();
+                    // if(pass.getPassword().getValue().equals(m_Text)){
+                         dialog.cancel();
+                   //  }
+                }
+            });
+//            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+//
+//                }
+//            });
+        Log.v("Main","password length: " + pass.getPassword());
+
+            builder.show();
+
+
+
+
+
+
 
         DataStoreUtil dataStore = new DataStoreUtil(this);
         String uid = dataStore.getID();
