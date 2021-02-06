@@ -42,11 +42,13 @@ public class password extends AppCompatActivity{
 
     final FormPasswordEditTextElement password = new FormPasswordEditTextElement(1);
     final FormPasswordEditTextElement confPassword = new FormPasswordEditTextElement(1);
+    public boolean isSet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.informationcontainer);
+
 
 
         // initialize variables
@@ -70,15 +72,12 @@ public class password extends AppCompatActivity{
 
 
         password.setValue(password.getValueAsString());
-
-        FormLabelElement label = new FormLabelElement(1);
-        label.setTitle("Password");
+        password.setTitle("Password");
 
 
         confPassword.setValue(confPassword.getValueAsString());
+        confPassword.setTitle("Confirm Password");
 
-        FormLabelElement label2 = new FormLabelElement(1);
-        label2.setTitle("Confirm Password");
 
         FormButtonElement save = new FormButtonElement(4);
         save.setValue("Save Password");
@@ -86,6 +85,7 @@ public class password extends AppCompatActivity{
                 @Override
                 public Unit invoke(String newValue, BaseFormElement<String> element) {
                     if(password.getValueAsString().equals(confPassword.getValueAsString())) {
+                        isSet = true;
                         SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = prefs.edit();
 
@@ -96,6 +96,7 @@ public class password extends AppCompatActivity{
                         Log.v("saved","Password saved");
                     }
                     else{
+                        isSet = false;
                         Log.v("error","Passwords don't match");
                     }
                     Log.v("Main", "The button was pressed.");
@@ -106,13 +107,13 @@ public class password extends AppCompatActivity{
 
         elements.add(header1);
 
-        elements.add(label);
+
         elements.add(password);
-        elements.add(label2);
+
         elements.add(confPassword);
         elements.add(save);
 
-
+        Log.v("Main","password length: " + password.toString().length());
         formBuilder.addFormElements(elements);
         // formBuilder.
 
@@ -124,8 +125,11 @@ public class password extends AppCompatActivity{
 
     }
 
-    public String getPassword(){
-        return password.getValueAsString();
+    public FormPasswordEditTextElement getPassword(){
+        return password;
+    }
+    public boolean getIsSet(){
+        return isSet;
     }
 
 
