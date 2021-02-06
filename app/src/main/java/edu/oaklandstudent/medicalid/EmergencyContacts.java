@@ -23,6 +23,7 @@ import edu.oaklandstudent.medicalid.R;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function2;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.thejuki.kformmaster.item.ListItem;
 import com.thejuki.kformmaster.listener.OnFormElementValueChangedListener;
 import com.thejuki.kformmaster.model.BaseFormElement;
@@ -129,6 +130,8 @@ public class EmergencyContacts extends AppCompatActivity{
 
                 editor.apply();
                 Log.v("Main", "The button was pressed.");
+
+                Snackbar.make(findViewById(android.R.id.content), "Information Saved!", Snackbar.LENGTH_SHORT).show();
                 return Unit.INSTANCE;
             }
         });

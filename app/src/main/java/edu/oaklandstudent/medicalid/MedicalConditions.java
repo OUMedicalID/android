@@ -13,6 +13,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -64,6 +66,7 @@ public class MedicalConditions extends AppCompatActivity implements View.OnClick
                     }
                     editor.putStringSet("mConditions",mConditions);
                     editor.commit();
+                    Snackbar.make(findViewById(android.R.id.content), "Information Saved!", Snackbar.LENGTH_SHORT).show();
                 }
 
                 break;

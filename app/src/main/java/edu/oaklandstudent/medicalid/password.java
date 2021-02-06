@@ -23,6 +23,7 @@ import edu.oaklandstudent.medicalid.R;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function2;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.thejuki.kformmaster.item.ListItem;
 import com.thejuki.kformmaster.listener.OnFormElementValueChangedListener;
 import com.thejuki.kformmaster.model.BaseFormElement;
@@ -94,10 +95,13 @@ public class password extends AppCompatActivity{
 
                         editor.apply();
                         Log.v("saved","Password saved");
+                        Snackbar.make(findViewById(android.R.id.content), "Password Set!", Snackbar.LENGTH_SHORT).show();
                     }
                     else{
                         isSet = false;
                         Log.v("error","Passwords don't match");
+                        Snackbar.make(findViewById(android.R.id.content), "Passwords do not match!", Snackbar.LENGTH_SHORT).show();
+
                     }
                     Log.v("Main", "The button was pressed.");
                     return Unit.INSTANCE;
@@ -121,6 +125,7 @@ public class password extends AppCompatActivity{
         SharedPreferences.Editor editor = prefs.edit();
         password.setValue(AESEncryption.decrypt(prefs.getString("password", null)));
         confPassword.setValue(AESEncryption.decrypt(prefs.getString("confPassword", null)));
+
 
 
     }
