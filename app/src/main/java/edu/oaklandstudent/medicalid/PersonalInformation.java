@@ -82,11 +82,15 @@ public class PersonalInformation extends AppCompatActivity{
         street.setHint("Address Line 1");
         street.setTitle("Address Line 1");
 
+        final FormSingleLineEditTextElement street2 = new FormSingleLineEditTextElement(22);
+        street2.setHint("Address Line 2");
+        street2.setTitle("Address Line 2");
+
 
         final FormPickerDropDownElement<ListItem> gender = new FormPickerDropDownElement<>(1);
         gender.setDialogTitle("Select Gender");
         gender.setOptions(Arrays.asList(new ListItem(1L, "Male"), new ListItem(2L, "Female"), new ListItem(3L, "Other")));
-        gender.setTitle("Select Gender");
+        gender.setTitle("Gender");
         gender.setHint("Click to Select");
 
         final FormSingleLineEditTextElement city = new FormSingleLineEditTextElement(6);
@@ -109,12 +113,22 @@ public class PersonalInformation extends AppCompatActivity{
                 new ListItem(44L, "Utah"), new ListItem(45L, "Vermont"), new ListItem(46L, "Virginia"), new ListItem(47L, "Washington"),
                 new ListItem(48L, "West Virginia"), new ListItem(49L, "Wisconsin"), new ListItem(50L, "Wyoming"), new ListItem(51L, "Other")
         ));
-        state.setTitle("Select State");
+        state.setTitle("State");
         state.setHint("Click to Select");
 
         final FormSingleLineEditTextElement zipCode = new FormSingleLineEditTextElement(8);
-        zipCode.setHint("Zip Code");
-        zipCode.setTitle("Zip Code");
+        zipCode.setHint("ZIP Code");
+        zipCode.setTitle("ZIP Code");
+
+        final FormSingleLineEditTextElement homePhone = new FormSingleLineEditTextElement(25);
+        homePhone.setHint("Home Phone");
+        homePhone.setTitle("Home Phone");
+
+        final FormSingleLineEditTextElement workPhone = new FormSingleLineEditTextElement(26);
+        workPhone.setHint("Work Phone");
+        workPhone.setTitle("Work Phone");
+
+
 
         final FormSingleLineEditTextElement weight = new FormSingleLineEditTextElement(9);
         weight.setHint("Weight");
@@ -126,36 +140,53 @@ public class PersonalInformation extends AppCompatActivity{
 
         final FormPickerDropDownElement<ListItem> bloodType = new FormPickerDropDownElement<>(11);
         bloodType.setDialogTitle("Select Blood Type");
-        bloodType.setOptions(Arrays.asList(new ListItem(1L, "Type A"), new ListItem(2L, "Type B"),
-                new ListItem(3L, "Type AB"), new ListItem(4L, "Type O")));
+        bloodType.setOptions(Arrays.asList(
+                new ListItem(1L, "A+"),
+                new ListItem(2L, "A-"),
+                new ListItem(3L, "B+"),
+                new ListItem(4L, "B-"),
+                new ListItem(5L, "O+"),
+                new ListItem(6L, "O-"),
+                new ListItem(7L, "AB+"),
+                new ListItem(8L, "AB-")
+        ));
         bloodType.setTitle("Blood Type");
         bloodType.setHint("Click to Select");
 
-        final FormSingleLineEditTextElement ethnicity = new FormSingleLineEditTextElement(12);
-        ethnicity.setHint("Optional");
+        final FormPickerDropDownElement<ListItem> ethnicity = new FormPickerDropDownElement<>(12);
+        ethnicity.setDialogTitle("Select Ethnicity");
+        ethnicity.setOptions(Arrays.asList(
+                new ListItem(1L, "American Indian or Alaskan Native"),
+                new ListItem(2L, "Asian"),
+                new ListItem(3L, "Black or African American"),
+                new ListItem(4L, "Hispanic or Latino"),
+                new ListItem(5L, "Native Hawaiian or other Pacific Islander"),
+                new ListItem(6L, "White"),
+                new ListItem(7L, "Two or more races"),
+                new ListItem(8L, "Other")
+                ));
         ethnicity.setTitle("Ethnicity");
+        ethnicity.setHint("Click to Select");
 
         final FormPickerDropDownElement<ListItem> maritalStatus = new FormPickerDropDownElement<>(13);
         maritalStatus.setDialogTitle("Marital Status");
         maritalStatus.setOptions(Arrays.asList(new ListItem(1L, "Single"), new ListItem(2L, "Married"), new ListItem(3L, "Divorced"), new ListItem(4L, "Widowed")));
-        maritalStatus.setTitle("Select Marital Status");
+        maritalStatus.setTitle("Marital Status");
         maritalStatus.setHint("Click to Select");
 
         final FormSingleLineEditTextElement primaryInsurance = new FormSingleLineEditTextElement(14);
         primaryInsurance.setHint("Primary Insurance Name");
-        primaryInsurance.setTitle("Name");
+        primaryInsurance.setTitle("Primary Insurance");
 
         final FormSingleLineEditTextElement primaryInsuranceNumber = new FormSingleLineEditTextElement(15);
-        primaryInsuranceNumber.setHint("Policy/Id Number");
-        primaryInsuranceNumber.setTitle("Number");
+        primaryInsuranceNumber.setHint("Policy Number");
+        primaryInsuranceNumber.setTitle("Policy Number");
 
-        final FormSingleLineEditTextElement primaryInsuranceGroupNumber = new FormSingleLineEditTextElement(16);
-        primaryInsuranceGroupNumber.setHint("Primary Insurance Group Number");
-        primaryInsuranceGroupNumber.setTitle("Group Number");
+        final FormSingleLineEditTextElement primaryInsuranceGroupNumberOrMainPH = new FormSingleLineEditTextElement(16);
+        primaryInsuranceGroupNumberOrMainPH.setHint("# / M.P.H");
+        primaryInsuranceGroupNumberOrMainPH.setTitle("Group # / Main Policy Holder");
 
-        final FormSingleLineEditTextElement primaryInsurancePolicyHolder = new FormSingleLineEditTextElement(17);
-        primaryInsurancePolicyHolder.setHint("Primary Insurance Policy Holder");
-        primaryInsurancePolicyHolder.setTitle("Policy Holder");
+
 
         FormButtonElement save = new FormButtonElement(4);
         save.setValue("Save Personal Information");
@@ -173,19 +204,23 @@ public class PersonalInformation extends AppCompatActivity{
                 editor.putString("name", AESEncryption.encrypt(name.getValue()));
                 editor.putString("dob", AESEncryption.encrypt(dob.getValueAsString()));
                 editor.putString("street1", AESEncryption.encrypt(street.getValue()));
+                editor.putString("street2", AESEncryption.encrypt(street2.getValue()));
                 editor.putString("gender", AESEncryption.encrypt(gender.getValueAsString()));
                 editor.putString("city", AESEncryption.encrypt(city.getValue()));
                 editor.putString("state", AESEncryption.encrypt(state.getValueAsString()));
                 editor.putString("zipCode", AESEncryption.encrypt(zipCode.getValue()));
+                editor.putString("homePhone", AESEncryption.encrypt(homePhone.getValue()));
+                editor.putString("workPhone", AESEncryption.encrypt(workPhone.getValue()));
+
+
                 editor.putString("weight", AESEncryption.encrypt(weight.getValue()));
                 editor.putString("height", AESEncryption.encrypt(height.getValue()));
                 editor.putString("bloodType", AESEncryption.encrypt(bloodType.getValueAsString()));
-                editor.putString("ethnicity", AESEncryption.encrypt(ethnicity.getValue()));
+                editor.putString("ethnicity", AESEncryption.encrypt(ethnicity.getValueAsString()));
                 editor.putString("maritalStatus", AESEncryption.encrypt(maritalStatus.getValueAsString()));
                 editor.putString("primaryInsurance", AESEncryption.encrypt(primaryInsurance.getValueAsString()));
                 editor.putString("primaryInsuranceNumber", AESEncryption.encrypt(primaryInsuranceNumber.getValueAsString()));
-                editor.putString("primaryInsuranceGroupNumber", AESEncryption.encrypt(primaryInsuranceGroupNumber.getValueAsString()));
-                editor.putString("primaryInsurancePolicyHolder", AESEncryption.encrypt(primaryInsurancePolicyHolder.getValueAsString()));
+                editor.putString("primaryInsuranceGroupNumberOrMainPH", AESEncryption.encrypt(primaryInsuranceGroupNumberOrMainPH.getValueAsString()));
 
                 //Log.wtf("OUS45", "Gender ID is "+gender.getId());
                 //Log.wtf("OUS45", "Gender Tag is "+gender.getTag());
@@ -206,22 +241,28 @@ public class PersonalInformation extends AppCompatActivity{
 
         elements.add(header);
         elements.add(name);
+        elements.add(gender);
         elements.add(dob);
         elements.add(street);
-        elements.add(gender);
+        elements.add(street2);
         elements.add(city);
         elements.add(state);
         elements.add(zipCode);
+        elements.add(homePhone);
+        elements.add(workPhone);
+
+
+        elements.add(header2);
+
+
+        elements.add(maritalStatus);
         elements.add(weight);
         elements.add(height);
         elements.add(bloodType);
         elements.add(ethnicity);
-        elements.add(maritalStatus);
-        elements.add(header2);
         elements.add(primaryInsurance);
         elements.add(primaryInsuranceNumber);
-        elements.add(primaryInsuranceGroupNumber);
-        elements.add(primaryInsurancePolicyHolder);
+        elements.add(primaryInsuranceGroupNumberOrMainPH);
 
 
         elements.add(save);
@@ -234,15 +275,17 @@ public class PersonalInformation extends AppCompatActivity{
         SharedPreferences.Editor editor = prefs.edit();
         name.setValue(AESEncryption.decrypt(prefs.getString("name", null)));
         street.setValue(AESEncryption.decrypt(prefs.getString("street1", null)));
+        street2.setValue(AESEncryption.decrypt(prefs.getString("street2", null)));
         city.setValue(AESEncryption.decrypt(prefs.getString("city", null)));
         zipCode.setValue(AESEncryption.decrypt(prefs.getString("zipCode", null)));
+        homePhone.setValue(AESEncryption.decrypt(prefs.getString("homePhone", null)));
+        workPhone.setValue(AESEncryption.decrypt(prefs.getString("workPhone", null)));
+
+
         weight.setValue(AESEncryption.decrypt(prefs.getString("weight", null)));
-        height.setValue(AESEncryption.decrypt(prefs.getString("height", null)));
-        ethnicity.setValue(AESEncryption.decrypt(prefs.getString("ethnicity", null)));
         primaryInsurance.setValue(AESEncryption.decrypt(prefs.getString("primaryInsurance", null)));
         primaryInsuranceNumber.setValue(AESEncryption.decrypt(prefs.getString("primaryInsuranceNumber", null)));
-        primaryInsuranceGroupNumber.setValue(AESEncryption.decrypt(prefs.getString("primaryInsuranceGroupNumber", null)));
-        primaryInsurancePolicyHolder.setValue(AESEncryption.decrypt(prefs.getString("primaryInsurancePolicyHolder", null)));
+        primaryInsuranceGroupNumberOrMainPH.setValue(AESEncryption.decrypt(prefs.getString("primaryInsuranceGroupNumberOrMainPH", null)));
 
         if (AESEncryption.decrypt(prefs.getString("maritalStatus", "")).equals("Single"))
             maritalStatus.setValue(new ListItem(1L, "Single"));
@@ -254,6 +297,37 @@ public class PersonalInformation extends AppCompatActivity{
             maritalStatus.setValue(new ListItem(4L, "Widowed"));
 
 
+
+
+
+        if (AESEncryption.decrypt(prefs.getString("ethnicity", "")).equals("American Indian or Alaskan Native"))
+            ethnicity.setValue(new ListItem(1L, "American Indian or Alaskan Native"));
+
+        if (AESEncryption.decrypt(prefs.getString("ethnicity", "")).equals("Asian"))
+            ethnicity.setValue(new ListItem(2L, "Asian"));
+
+        if (AESEncryption.decrypt(prefs.getString("ethnicity", "")).equals("Black or African American"))
+            ethnicity.setValue(new ListItem(3L, "Black or African American"));
+
+        if (AESEncryption.decrypt(prefs.getString("ethnicity", "")).equals("Hispanic or Latino"))
+            ethnicity.setValue(new ListItem(4L, "Hispanic or Latino"));
+
+        if (AESEncryption.decrypt(prefs.getString("ethnicity", "")).equals("Native Hawaiian or other Pacific Islander"))
+            ethnicity.setValue(new ListItem(5L, "Native Hawaiian or other Pacific Islander"));
+
+        if (AESEncryption.decrypt(prefs.getString("ethnicity", "")).equals("White"))
+            ethnicity.setValue(new ListItem(6L, "White"));
+
+        if (AESEncryption.decrypt(prefs.getString("ethnicity", "")).equals("Two or more races"))
+            ethnicity.setValue(new ListItem(7L, "Two or more races"));
+
+        if (AESEncryption.decrypt(prefs.getString("ethnicity", "")).equals("Other"))
+            ethnicity.setValue(new ListItem(8L, "Other"));
+
+
+
+
+
         if (AESEncryption.decrypt(prefs.getString("gender", "")).equals("Male"))
             gender.setValue(new ListItem(1L, "Male"));
         if (AESEncryption.decrypt(prefs.getString("gender", "")).equals("Female"))
@@ -261,14 +335,30 @@ public class PersonalInformation extends AppCompatActivity{
         if (AESEncryption.decrypt(prefs.getString("gender", "")).equals("Other"))
             gender.setValue(new ListItem(3L, "Other"));
 
-        if (AESEncryption.decrypt(prefs.getString("bloodType", "")).equals("Type A"))
-            bloodType.setValue(new ListItem(1L, "Type A"));
-        if (AESEncryption.decrypt(prefs.getString("bloodType", "")).equals("Type B"))
-            bloodType.setValue(new ListItem(2L, "Type B"));
-        if (AESEncryption.decrypt(prefs.getString("bloodType", "")).equals("Type AB"))
-            bloodType.setValue(new ListItem(3L, "Type AB"));
-        if (AESEncryption.decrypt(prefs.getString("bloodType", "")).equals("Type O"))
-            bloodType.setValue(new ListItem(4L, "Type O"));
+        if (AESEncryption.decrypt(prefs.getString("bloodType", "")).equals("A+"))
+            bloodType.setValue(new ListItem(1L, "A+"));
+
+        if (AESEncryption.decrypt(prefs.getString("bloodType", "")).equals("A-"))
+            bloodType.setValue(new ListItem(2L, "A-"));
+
+        if (AESEncryption.decrypt(prefs.getString("bloodType", "")).equals("B+"))
+            bloodType.setValue(new ListItem(3L, "B+"));
+
+        if (AESEncryption.decrypt(prefs.getString("bloodType", "")).equals("B-"))
+            bloodType.setValue(new ListItem(4L, "B-"));
+
+        if (AESEncryption.decrypt(prefs.getString("bloodType", "")).equals("O+"))
+            bloodType.setValue(new ListItem(5L, "O+"));
+
+        if (AESEncryption.decrypt(prefs.getString("bloodType", "")).equals("O-"))
+            bloodType.setValue(new ListItem(6L, "O-"));
+
+        if (AESEncryption.decrypt(prefs.getString("bloodType", "")).equals("AB+"))
+            bloodType.setValue(new ListItem(7L, "AB+"));
+
+        if (AESEncryption.decrypt(prefs.getString("bloodType", "")).equals("AB-"))
+            bloodType.setValue(new ListItem(8L, "AB-"));
+
 
         if (AESEncryption.decrypt(prefs.getString("state", "")).equals("Alabama"))
             state.setValue(new ListItem(1L, "Alabama"));
