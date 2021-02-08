@@ -1,55 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".MainActivity">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Conditions List"
-            android:gravity="center"
-            android:textSize="25sp"
-            android:layout_margin="15dp"
-            android:textColor="@color/colorPrimaryDark"></TextView>
-
+<ScrollView
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="fill_parent"
+android:layout_height="fill_parent">
         <LinearLayout
-            android:id="@+id/layout_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"></LinearLayout>
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            tools:context=".MainActivity">
 
-        <Button
-            android:id="@+id/button_add"
-            android:background="@drawable/round_primary"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:text="Add"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:textColor="@color/cardview_light_background"
-            android:textAllCaps="false"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            ></Button>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Conditions List"
+                    android:gravity="center"
+                    android:textSize="25sp"
+                    android:layout_margin="15dp"
+                    android:textColor="@color/colorPrimaryDark"></TextView>
 
-        <Button
-            android:id="@+id/button_submit_list"
-            android:background="@drawable/round_primary"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:text="Save Conditions"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:textColor="@color/cardview_light_background"
-            android:textAllCaps="false"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            ></Button>
+                <LinearLayout
+                    android:id="@+id/layout_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"></LinearLayout>
 
-</LinearLayout>
+                <Button
+                    android:id="@+id/button_add"
+                    android:background="@drawable/round_primary"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:text="Add"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:textColor="@color/cardview_light_background"
+                    android:textAllCaps="false"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    ></Button>
+
+                <Button
+                    android:id="@+id/button_submit_list"
+                    android:background="@drawable/round_primary"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:text="Save Conditions"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:textColor="@color/cardview_light_background"
+                    android:textAllCaps="false"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    ></Button>
+
+        </LinearLayout>
+</ScrollView>

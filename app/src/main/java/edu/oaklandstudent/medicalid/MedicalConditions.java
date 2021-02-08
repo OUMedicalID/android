@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,9 +14,14 @@ import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -60,11 +64,14 @@ public class MedicalConditions extends AppCompatActivity implements View.OnClick
                 if(checkIfValidAndRead()){
                     SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = prefs.edit();
-                    Set<String> mConditions = new HashSet<String>();
+                    HashMap<String,String> myMap = new HashMap<>();
+                    //Set<String> mConditions = new HashSet<String>();
                     for(int j = 0;j < conditionsList.size();j++) {
-                        mConditions.add(conditionsList.get(j));
+                        myMap.put(Integer.toString(j),conditionsList.get(j));
+                        //mConditions.add(conditionsList.get(j));
                     }
-                    editor.putStringSet("mConditions",mConditions);
+                    saveMap(myMap);
+                    //editor.putStringSet("mConditions",mConditions);
                     editor.commit();
                     Snackbar.make(findViewById(android.R.id.content), "Information Saved!", Snackbar.LENGTH_SHORT).show();
                 }
@@ -84,7 +91,7 @@ public class MedicalConditions extends AppCompatActivity implements View.OnClick
 
             View conditionsView = layoutList.getChildAt(i);
 
-            EditText editTextName = (EditText)conditionsView.findViewById(R.id.edit_conditions_name);
+            EditText editTextName = (EditText)conditionsView.findViewById(R.id.row_add);
 
             if(!editTextName.getText().toString().equals("")){
                 conditionsList.add(editTextName.getText().toString());
@@ -98,7 +105,7 @@ public class MedicalConditions extends AppCompatActivity implements View.OnClick
         if(conditionsList.size()==0){
             SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = prefs.edit();
-            editor.remove("mConditions");
+            editor.remove("conditionInformation");
             editor.apply();
             result = false;
 
@@ -113,9 +120,9 @@ public class MedicalConditions extends AppCompatActivity implements View.OnClick
 
     private void addView() {
 
-        final View conditionsView = getLayoutInflater().inflate(R.layout.row_add_condition,null,false);
+        final View conditionsView = getLayoutInflater().inflate(R.layout.row_add,null,false);
 
-        EditText editText = (EditText)conditionsView.findViewById(R.id.edit_conditions_name);
+        EditText editText = (EditText)conditionsView.findViewById(R.id.row_add);
         ImageView imageClose = (ImageView)conditionsView.findViewById(R.id.image_remove);
 
         imageClose.setOnClickListener(new View.OnClickListener() {
@@ -139,15 +146,18 @@ public class MedicalConditions extends AppCompatActivity implements View.OnClick
         SharedPreferences.Editor editor = prefs.edit();
         final Set<String> mConditions = prefs.getStringSet("mConditions", null);
 
-        if(mConditions == null) return;
-        else{
-            ArrayList<String> restoreConditions = new ArrayList<String>(mConditions);
-            Collections.sort(restoreConditions, String.CASE_INSENSITIVE_ORDER);
-            for(int i = 0;i < restoreConditions.size();i++) {
-                final View conditionsView = getLayoutInflater().inflate(R.layout.row_add_condition, null, false);
+        Map<String,String> restoreMap = new HashMap<>();
+        restoreMap = loadMap();
 
-                EditText editText = (EditText) conditionsView.findViewById(R.id.edit_conditions_name);
-                editText.setText(restoreConditions.get(i));
+        if(restoreMap == null) return;
+        else{
+            //ArrayList<String> restoreConditions = new ArrayList<String>(mConditions);
+            //Collections.sort(restoreConditions, String.CASE_INSENSITIVE_ORDER);
+            for(int i = 0;i < restoreMap.size();i++) {
+                final View conditionsView = getLayoutInflater().inflate(R.layout.row_add, null, false);
+
+                EditText editText = (EditText) conditionsView.findViewById(R.id.row_add);
+                editText.setText(restoreMap.get(Integer.toString(i)));
                 ImageView imageClose = (ImageView) conditionsView.findViewById(R.id.image_remove);
 
                 imageClose.setOnClickListener(new View.OnClickListener() {
@@ -160,5 +170,36 @@ public class MedicalConditions extends AppCompatActivity implements View.OnClick
                 layoutList.addView(conditionsView);
             }
         }
+    }
+    private void saveMap(Map<String,String> inputMap){
+        SharedPreferences pSharedPref = getApplicationContext().getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
+        if (pSharedPref != null){
+            JSONObject jsonObject = new JSONObject(inputMap);
+            String jsonString = jsonObject.toString();
+            SharedPreferences.Editor editor = pSharedPref.edit();
+            editor.remove("conditionInformation").commit();
+            editor.putString("conditionInformation", jsonString);
+            editor.commit();
+        }
+    }
+
+    private Map<String,String> loadMap(){
+        Map<String,String> outputMap = new HashMap<String,String>();
+        SharedPreferences pSharedPref = getApplicationContext().getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
+        try{
+            if (pSharedPref != null){
+                String jsonString = pSharedPref.getString("conditionInformation", (new JSONObject()).toString());
+                JSONObject jsonObject = new JSONObject(jsonString);
+                Iterator<String> keysItr = jsonObject.keys();
+                while(keysItr.hasNext()) {
+                    String key = keysItr.next();
+                    String value = (String) jsonObject.get(key);
+                    outputMap.put(key, value);
+                }
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return outputMap;
     }
 }

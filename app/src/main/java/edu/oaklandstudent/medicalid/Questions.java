@@ -85,10 +85,24 @@ public class Questions extends Fragment {
             }
         });
 
+        FormButtonElement accidentInformation = new FormButtonElement(7);
+        accidentInformation.setValue("Accident Information");
+        accidentInformation.getValueObservers().add(new Function2<String, BaseFormElement<String>, Unit>() {
+            @Override
+            public Unit invoke(String newValue, BaseFormElement<String> element) {
+
+                Intent myIntent = new Intent(Questions.this.getContext(), AccidentInformation.class);
+                startActivity(myIntent);
+
+                return Unit.INSTANCE;
+            }
+        });
+
         elements.add(header);
         elements.add(personal);
         elements.add(emergencyContacts);
         elements.add(medicalConditions);
+        elements.add(accidentInformation);
 
         formBuilder.addFormElements(elements);
 

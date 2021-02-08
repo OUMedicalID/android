@@ -8,12 +8,12 @@
     android:paddingBottom="5dp">
 
     <EditText
-        android:id="@+id/edit_conditions_name"
+        android:id="@+id/row_add"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="5dp"
         android:background="@color/cardview_light_background"
         android:layout_weight="1"
-        android:hint="Condition"
+        android:hint="Add Information"
         android:textSize="14sp"
         android:paddingLeft="10dp"
         android:textColor="@color/colorPrimaryDark"
