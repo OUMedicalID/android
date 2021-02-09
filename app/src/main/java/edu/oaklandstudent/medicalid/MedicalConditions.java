@@ -10,19 +10,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 
 public class MedicalConditions extends AppCompatActivity implements View.OnClickListener{
@@ -35,6 +31,7 @@ public class MedicalConditions extends AppCompatActivity implements View.OnClick
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.medical_conditions);
 
@@ -65,13 +62,10 @@ public class MedicalConditions extends AppCompatActivity implements View.OnClick
                     SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = prefs.edit();
                     HashMap<String,String> myMap = new HashMap<>();
-                    //Set<String> mConditions = new HashSet<String>();
                     for(int j = 0;j < conditionsList.size();j++) {
-                        myMap.put(Integer.toString(j),conditionsList.get(j));
-                        //mConditions.add(conditionsList.get(j));
+                        myMap.put(Integer.toString(j),AESEncryption.encrypt(conditionsList.get(j)));
                     }
                     saveMap(myMap);
-                    //editor.putStringSet("mConditions",mConditions);
                     editor.commit();
                     Snackbar.make(findViewById(android.R.id.content), "Information Saved!", Snackbar.LENGTH_SHORT).show();
                 }
@@ -84,6 +78,7 @@ public class MedicalConditions extends AppCompatActivity implements View.OnClick
     }
 
     private boolean checkIfValidAndRead() {
+
         conditionsList.clear();
         boolean result = true;
 
@@ -108,11 +103,9 @@ public class MedicalConditions extends AppCompatActivity implements View.OnClick
             editor.remove("conditionInformation");
             editor.apply();
             result = false;
-
-            //Keep this or Nah?
-            Toast.makeText(this, "Add Condition First!", Toast.LENGTH_SHORT).show();
+            Snackbar.make(findViewById(android.R.id.content), "Add Condition First!", Snackbar.LENGTH_SHORT).show();
         }else if(!result){
-            Toast.makeText(this, "Enter All Details Correctly!", Toast.LENGTH_SHORT).show();
+            Snackbar.make(findViewById(android.R.id.content), "Enter All Details Correctly!", Snackbar.LENGTH_SHORT).show();
         }
 
         return result;
@@ -121,7 +114,6 @@ public class MedicalConditions extends AppCompatActivity implements View.OnClick
     private void addView() {
 
         final View conditionsView = getLayoutInflater().inflate(R.layout.row_add,null,false);
-
         EditText editText = (EditText)conditionsView.findViewById(R.id.row_add);
         ImageView imageClose = (ImageView)conditionsView.findViewById(R.id.image_remove);
 
@@ -142,22 +134,19 @@ public class MedicalConditions extends AppCompatActivity implements View.OnClick
 
     }
     public void restore(){
+
         SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        final Set<String> mConditions = prefs.getStringSet("mConditions", null);
-
         Map<String,String> restoreMap = new HashMap<>();
         restoreMap = loadMap();
 
         if(restoreMap == null) return;
         else{
-            //ArrayList<String> restoreConditions = new ArrayList<String>(mConditions);
-            //Collections.sort(restoreConditions, String.CASE_INSENSITIVE_ORDER);
             for(int i = 0;i < restoreMap.size();i++) {
                 final View conditionsView = getLayoutInflater().inflate(R.layout.row_add, null, false);
 
                 EditText editText = (EditText) conditionsView.findViewById(R.id.row_add);
-                editText.setText(restoreMap.get(Integer.toString(i)));
+                editText.setText(AESEncryption.decrypt(restoreMap.get(Integer.toString(i))));
                 ImageView imageClose = (ImageView) conditionsView.findViewById(R.id.image_remove);
 
                 imageClose.setOnClickListener(new View.OnClickListener() {
@@ -172,7 +161,9 @@ public class MedicalConditions extends AppCompatActivity implements View.OnClick
         }
     }
     private void saveMap(Map<String,String> inputMap){
+
         SharedPreferences pSharedPref = getApplicationContext().getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
+
         if (pSharedPref != null){
             JSONObject jsonObject = new JSONObject(inputMap);
             String jsonString = jsonObject.toString();
@@ -184,8 +175,10 @@ public class MedicalConditions extends AppCompatActivity implements View.OnClick
     }
 
     private Map<String,String> loadMap(){
+
         Map<String,String> outputMap = new HashMap<String,String>();
         SharedPreferences pSharedPref = getApplicationContext().getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
+
         try{
             if (pSharedPref != null){
                 String jsonString = pSharedPref.getString("conditionInformation", (new JSONObject()).toString());

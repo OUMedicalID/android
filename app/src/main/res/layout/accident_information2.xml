@@ -13,7 +13,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Accidents List"
+            android:text="History of Accidents"
             android:gravity="center"
             android:textSize="25sp"
             android:layout_margin="15dp"
@@ -44,7 +44,7 @@
             android:background="@drawable/round_primary"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:text="Save Conditions"
+            android:text="Save Accident Information"
             android:layout_marginTop="10dp"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
