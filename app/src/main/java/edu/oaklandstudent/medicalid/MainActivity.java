@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
             Log.wtf("MAINDEBUG", entry.getKey() + ": " + entry.getValue().toString());
         }
-       */
+        */
 
 
 

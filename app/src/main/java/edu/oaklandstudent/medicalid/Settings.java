@@ -1,6 +1,10 @@
 package edu.oaklandstudent.medicalid;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -8,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -81,11 +86,34 @@ public class Settings extends Fragment {
 
 
         FormButtonElement clear = new FormButtonElement(3);
+        SharedPreferences prefs = this.getContext().getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
+        final SharedPreferences.Editor editor = prefs.edit();
+
         clear.setValue("Clear Application Data");
         clear.getValueObservers().add(new Function2<String, BaseFormElement<String>, Unit>() {
             @Override
             public Unit invoke(String newValue, BaseFormElement<String> element) {
 
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Application Data");
+                builder.setMessage("Are you sure you want to clear app data?");
+
+                builder.setPositiveButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        editor.clear().apply();
+                    }
+                });
+                builder.setNegativeButton(R.string.dialog_no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        //Testing the "getSavedPrefsData" function
+                        ExportData.getSavedPrefsData(getContext());
+                        dialog.cancel();
+                    }
+                });
+// Set other dialog properties
+
+// Create the AlertDialog
+                builder.show();
 
 
                 return Unit.INSTANCE;

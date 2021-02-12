@@ -26,6 +26,7 @@
         android:textFontWeight="@android:integer/config_mediumAnimTime"
         android:layout_marginBottom="10dip"
         android:paddingBottom="125dp"
+        android:gravity="center"
         android:text="Welcome, John!" />
 
 
