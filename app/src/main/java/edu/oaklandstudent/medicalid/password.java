@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -86,19 +87,18 @@ public class password extends AppCompatActivity{
                 @Override
                 public Unit invoke(String newValue, BaseFormElement<String> element) {
                     if(password.getValueAsString().equals(confPassword.getValueAsString())) {
-                        isSet = true;
+
                         SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = prefs.edit();
 
                         editor.putString("password", AESEncryption.encrypt(password.getValue()));
-                        editor.putString("confPassword", AESEncryption.encrypt(confPassword.getValue()));
 
                         editor.apply();
                         Log.v("saved","Password saved");
                         Snackbar.make(findViewById(android.R.id.content), "Password Set!", Snackbar.LENGTH_SHORT).show();
                     }
                     else{
-                        isSet = false;
+
                         Log.v("error","Passwords don't match");
                         Snackbar.make(findViewById(android.R.id.content), "Passwords do not match!", Snackbar.LENGTH_SHORT).show();
 
@@ -108,14 +108,31 @@ public class password extends AppCompatActivity{
                 }
             });
 
+        FormButtonElement clear = new FormButtonElement(76);
+        clear.setValue("Clear Password");
+        clear.setValueTextColor(Color.rgb(255, 0, 0));
+        clear.getValueObservers().add(new Function2<String, BaseFormElement<String>, Unit>() {
+            @Override
+            public Unit invoke(String newValue, BaseFormElement<String> element) {
+
+                SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putString("password", null);
+                Snackbar.make(findViewById(android.R.id.content), "Passwords has been cleared.", Snackbar.LENGTH_SHORT).show();
+                Log.v("Main", "The button was pressed.");
+                return Unit.INSTANCE;
+            }
+        });
+
 
         elements.add(header1);
 
 
         elements.add(password);
-
         elements.add(confPassword);
         elements.add(save);
+        elements.add(clear);
+
 
         Log.v("Main","password length: " + password.toString().length());
         formBuilder.addFormElements(elements);
@@ -124,7 +141,6 @@ public class password extends AppCompatActivity{
         SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         password.setValue(AESEncryption.decrypt(prefs.getString("password", null)));
-        confPassword.setValue(AESEncryption.decrypt(prefs.getString("confPassword", null)));
 
 
 

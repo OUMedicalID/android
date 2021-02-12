@@ -150,6 +150,8 @@ public class PersonalInformation extends AppCompatActivity{
                 new ListItem(7L, "AB+"),
                 new ListItem(8L, "AB-")
         ));
+
+
         bloodType.setTitle("Blood Type");
         bloodType.setHint("Click to Select");
 
@@ -283,6 +285,7 @@ public class PersonalInformation extends AppCompatActivity{
 
 
         weight.setValue(AESEncryption.decrypt(prefs.getString("weight", null)));
+        height.setValue(AESEncryption.decrypt(prefs.getString("height", null)));
         primaryInsurance.setValue(AESEncryption.decrypt(prefs.getString("primaryInsurance", null)));
         primaryInsuranceNumber.setValue(AESEncryption.decrypt(prefs.getString("primaryInsuranceNumber", null)));
         primaryInsuranceGroupNumberOrMainPH.setValue(AESEncryption.decrypt(prefs.getString("primaryInsuranceGroupNumberOrMainPH", null)));
