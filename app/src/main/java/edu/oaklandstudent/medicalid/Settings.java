@@ -41,6 +41,9 @@ public class Settings extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
 
+        SharedPreferences prefs = getContext().getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
+        final SharedPreferences.Editor editor = prefs.edit();
+
         View RootView = inflater.inflate(R.layout.settings, container, false);
         RecyclerView mRecyclerView = (RecyclerView) RootView.findViewById(R.id.settingView);
 
@@ -62,12 +65,30 @@ public class Settings extends Fragment {
             @Override
             public Unit invoke(String newValue, BaseFormElement<String> element) {
 
+                Log.wtf("MAINDEBUG", newValue);
+
+
+
+                editor.putString("bioAuth", newValue);
+                editor.commit();
+
+                if(newValue == "true"){
+                    // If biometrics turned on, disable password authentication.
+                    Log.v("Main","Setting password to null.");
+                    editor.putString("password", null);
+                    editor.commit();
+                }
+
+
 
                 return Unit.INSTANCE;
             }
         });
 
 
+
+        // NOTE: THIS IS NOT CONFIDENTIAL INFO. NO NEED TO ENCRYPT.
+        switchElement.setValue(prefs.getString("bioAuth", "false"));
 
 
 
@@ -86,8 +107,7 @@ public class Settings extends Fragment {
 
 
         FormButtonElement clear = new FormButtonElement(3);
-        SharedPreferences prefs = this.getContext().getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
-        final SharedPreferences.Editor editor = prefs.edit();
+
 
         clear.setValue("Clear Application Data");
         clear.getValueObservers().add(new Function2<String, BaseFormElement<String>, Unit>() {

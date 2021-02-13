@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.nfc.NfcAdapter;
@@ -14,7 +15,10 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 
+import com.an.biometric.BiometricCallback;
+import com.an.biometric.BiometricManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.thejuki.kformmaster.model.FormPasswordEditTextElement;
 
@@ -37,22 +41,20 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         String myPassword =  AESEncryption.decrypt(prefs.getString("password", null));
+        String bioAuth = prefs.getString("bioAuth", "false");
 
-
-        Log.wtf("MAINDEBUG", "Pass: "+myPassword);
 
         if(myPassword != null && !myPassword.equals("")){
+            enableBottomBar(false); // Prevent an exploit where users can move during the split second alertdialog is gone.
             promptPassword();
         }
 
-
-        /*
-        // Use this to check all items saved are encrypted.
-        Map<String, ?> allEntries = prefs.getAll();
-        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
-            Log.wtf("MAINDEBUG", entry.getKey() + ": " + entry.getValue().toString());
+        if(bioAuth.equals("true")){
+            bioAuthentication();
         }
-        */
+
+
+
 
 
 
@@ -65,10 +67,11 @@ public class MainActivity extends AppCompatActivity {
         //tv1.setText(uid);
 
         // Begin nav stuff
-        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
-        bottomNav.setOnNavigationItemSelectedListener(navListener);
-        //I added this if statement to keep the selected fragment when rotating the device
+            BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+            bottomNav.setOnNavigationItemSelectedListener(navListener);
 
+
+        //I added this if statement to keep the selected fragment when rotating the device
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     new Home()).commit();
@@ -116,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void promptPassword(){
+        enableBottomBar(false);
         final password pass = new password();
         x.setValue("");
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -140,6 +144,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                 if(m_Text.equals(pass)){
+                    enableBottomBar(true);
                     dialog.cancel();
                 }else{
                     promptPassword();
@@ -161,7 +166,50 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    public void bioAuthentication(){
+        new BiometricManager.BiometricBuilder(MainActivity.this)
+                .setTitle("Authentication")
+                .setSubtitle("Please authenticate yourself.")
+                .setDescription("Biometric authentication is turned on which means that a valid fingerprint or equivalent biometric is required.\n\nIf you do not have a valid biometric, you will need to clear all app data.")
+                .setNegativeButtonText("Cancel")
+                .build()
+                .authenticate(new BiometricCallback() {
+                    @Override public void onSdkVersionNotSupported() { Log.wtf("AUTH", "onSdkVersionNotSupported()"); }
+                    @Override public void onBiometricAuthenticationNotSupported() { Log.wtf("AUTH", "onBiometricAuthenticationNotSupported()"); }
+                    @Override public void onBiometricAuthenticationNotAvailable() { Log.wtf("AUTH", "onBiometricAuthenticationNotAvailable()"); }
+                    @Override public void onBiometricAuthenticationPermissionNotGranted() { Log.wtf("AUTH", "onBiometricAuthenticationPermissionNotGranted()"); }
+                    @Override public void onBiometricAuthenticationInternalError(String error) { Log.wtf("AUTH", "onBiometricAuthenticationInternalError()"); }
+                    @Override public void onAuthenticationSuccessful() { Log.wtf("AUTH", "onAuthenticationSuccessful()"); }
+                    @Override public void onAuthenticationHelp(int helpCode, CharSequence helpString) { Log.wtf("AUTH", " onAuthenticationHelp()"); }
+                    @Override public void onAuthenticationFailed() { Log.wtf("AUTH", "onAuthenticationFailed()"); }
+
+                    @Override public void onAuthenticationCancelled() {
+                        Intent myIntent = new Intent(MainActivity.this.getApplicationContext(), authFailed.class);
+                        startActivity(myIntent);
+                    }
+                    @Override public void onAuthenticationError(int errorCode, CharSequence errString) {
+                        Intent myIntent = new Intent(MainActivity.this.getApplicationContext(), authFailed.class);
+                        startActivity(myIntent);
+                    }
+
+                });
+    }
+
+    private void enableBottomBar(boolean enable){
+        Log.wtf("AUTH", "Nav disabled");
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+        for (int i = 0; i < bottomNav.getMenu().size(); i++) {
+            bottomNav.getMenu().getItem(i).setEnabled(enable);
+        }
+    }
+
+
+
+
+
+
 }
+
 
 
 

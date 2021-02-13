@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center">
+
+
+    <ImageView
+        android:id="@+id/picture"
+        tools:srcCompat="@tools:sample/avatars"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        />
+
+    <TextView
+        android:id="@+id/personName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:textSize="28sp"
+        android:textColor="#ff0000"
+        android:textStyle="bold"
+
+        android:layout_marginBottom="10dip"
+        android:paddingBottom="125dp"
+        android:gravity="center"
+        android:text="Authentication Failed" />
+
+    <Button
+        android:id="@+id/resetApplication"
+        android:text="Reset Application"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:layout_width="340dp"
+        android:layout_height="60dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/buttonshape"
+        android:layout_marginBottom="200dip"
+        android:gravity="center"
+        android:textAllCaps="false"
+        />
+
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:textSize="20sp"
+        android:textColor="@android:color/black"
+        android:paddingTop="190dp"
+        android:gravity="center"
+        android:text="We could not authenticate you. Please restart the app to try again, or click the button above to reset all data." />
+
+
+
+
+
+
+
+</RelativeLayout>

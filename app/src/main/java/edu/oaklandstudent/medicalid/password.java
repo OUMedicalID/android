@@ -92,8 +92,9 @@ public class password extends AppCompatActivity{
                         SharedPreferences.Editor editor = prefs.edit();
 
                         editor.putString("password", AESEncryption.encrypt(password.getValue()));
-
+                        editor.putString("bioAuth", null); // When we enable password auth, disable biometrics.
                         editor.apply();
+
                         Log.v("saved","Password saved");
                         Snackbar.make(findViewById(android.R.id.content), "Password Set!", Snackbar.LENGTH_SHORT).show();
                     }
