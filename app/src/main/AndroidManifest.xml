@@ -28,6 +28,8 @@
         <activity android:name="edu.oaklandstudent.medicalid.AccidentInformation"></activity>
         <activity android:name="edu.oaklandstudent.medicalid.authFailed"></activity>
         <activity android:name="edu.oaklandstudent.medicalid.password"></activity>
+        <activity android:name="edu.oaklandstudent.medicalid.Credits"></activity>
+        <activity android:name="edu.oaklandstudent.medicalid.About"></activity>
         <activity android:name="edu.oaklandstudent.medicalid.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
