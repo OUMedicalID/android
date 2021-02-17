@@ -37,7 +37,7 @@ import com.thejuki.kformmaster.helper.FormBuildHelper;
 public class PersonalInformation extends AppCompatActivity{
     public List<BaseFormElement<?>> elements = new ArrayList<>();
     public final FormHeader header1 = new FormHeader("Accident/Injury Info");
-    public final FormHeader header2 = new FormHeader("Primary Insurance");
+    public final FormHeader header2 = new FormHeader("Other Personal Information");
     public int newID = 4;
 
     @Override
