@@ -151,6 +151,8 @@ public class Settings extends Fragment {
             @Override
             public Unit invoke(String newValue, BaseFormElement<String> element) {
 
+                Intent myIntent = new Intent(Settings.this.getContext(), About.class);
+                startActivity(myIntent);
 
                 return Unit.INSTANCE;
             }
@@ -162,6 +164,8 @@ public class Settings extends Fragment {
             @Override
             public Unit invoke(String newValue, BaseFormElement<String> element) {
 
+                Intent myIntent = new Intent(Settings.this.getContext(), Credits.class);
+                startActivity(myIntent);
 
                 return Unit.INSTANCE;
             }
