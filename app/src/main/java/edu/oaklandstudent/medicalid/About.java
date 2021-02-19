@@ -2,6 +2,8 @@ package edu.oaklandstudent.medicalid;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,17 +17,16 @@ public class About extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.informationcontainer);
+        setContentView(R.layout.about);
 
-        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewic);
 
-        FormBuildHelper formBuilder = new FormBuildHelper(new OnFormElementValueChangedListener() {
-            @Override
-            public void onValueChanged(BaseFormElement baseFormElement) {
-                Log.i("FirstForm", "Something in the form was changed.");
-            }
-        }, mRecyclerView);
+        ImageView iv = (ImageView)findViewById(R.id.picture);
+        iv.setImageResource(R.drawable.ic_undraw_profile_6l1l);
+        ViewGroup.LayoutParams params = (ViewGroup.LayoutParams) iv.getLayoutParams();
+        params.width = 800;
+        params.height = 710;
+        iv.setLayoutParams(params);
 
-        formBuilder.attachRecyclerView(mRecyclerView);
+        
     }
 }
