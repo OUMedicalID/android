@@ -22,15 +22,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <!--<activity android:name=".Questions"></activity>-->
-        <activity android:name="edu.oaklandstudent.medicalid.PersonalInformation"></activity>
-        <activity android:name="edu.oaklandstudent.medicalid.EmergencyContacts"></activity>
-        <activity android:name="edu.oaklandstudent.medicalid.MedicalConditions"></activity>
-        <activity android:name="edu.oaklandstudent.medicalid.AccidentInformation"></activity>
-        <activity android:name="edu.oaklandstudent.medicalid.authFailed"></activity>
-        <activity android:name="edu.oaklandstudent.medicalid.password"></activity>
-        <activity android:name="edu.oaklandstudent.medicalid.Login"></activity>
-        <activity android:name="edu.oaklandstudent.medicalid.Credits"></activity>
-        <activity android:name="edu.oaklandstudent.medicalid.About"></activity>
+        <activity android:name="edu.oaklandstudent.medicalid.PersonalInformation" />
+        <activity android:name="edu.oaklandstudent.medicalid.EmergencyContacts" />
+        <activity android:name="edu.oaklandstudent.medicalid.MedicalConditions" />
+        <activity android:name="edu.oaklandstudent.medicalid.AccidentInformation" />
+        <activity android:name="edu.oaklandstudent.medicalid.authFailed" />
+        <activity android:name="edu.oaklandstudent.medicalid.password" />
+        <activity android:name="edu.oaklandstudent.medicalid.Login" />
+        <activity android:name="edu.oaklandstudent.medicalid.Registration" />
+        <activity android:name="edu.oaklandstudent.medicalid.Credits" />
+        <activity android:name="edu.oaklandstudent.medicalid.About" />
         <activity android:name="edu.oaklandstudent.medicalid.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

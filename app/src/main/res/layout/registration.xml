@@ -13,7 +13,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="40dp"
         android:layout_marginEnd="8dp"
-        android:text="Medical ID"
+        android:text="Registration"
         android:textSize="96px"
         android:textColor="@color/colorPrimary"
         android:fontFamily="@font/montserrat_bold"
@@ -84,7 +84,7 @@
 
 
     <Button
-        android:id="@+id/loginButton"
+        android:id="@+id/registerButton"
         android:layout_width="340dp"
         android:layout_height="56dp"
         android:layout_marginStart="8dp"
@@ -92,25 +92,10 @@
         android:layout_marginEnd="8dp"
         android:background="@drawable/buttonshape"
         app:layout_constraintEnd_toEndOf="parent"
-        android:text="Login"
+        android:text="Register Account"
         android:textColor="#FFFFFF"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/password" />
 
-
-
-    <TextView
-        android:id="@+id/createAccount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="32dp"
-        android:fontFamily="@font/montserrat_light"
-        android:text="Don't you have an account? Create"
-        android:textColor="@color/colorPrimaryDark"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

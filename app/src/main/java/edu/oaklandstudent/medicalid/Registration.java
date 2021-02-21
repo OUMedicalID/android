@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -24,7 +23,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -48,10 +46,9 @@ import com.thejuki.kformmaster.model.FormSegmentedElement;
 import com.thejuki.kformmaster.model.FormSingleLineEditTextElement;
 import com.thejuki.kformmaster.helper.FormBuildHelper;
 
-import org.w3c.dom.Text;
 
 
-public class Login extends AppCompatActivity{
+public class Registration extends AppCompatActivity{
 
     private String username;
     private String password;
@@ -59,14 +56,13 @@ public class Login extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login);
+        setContentView(R.layout.registration);
 
-        final EditText usernameText = (findViewById(R.id.username));
+        final EditText usernameText = findViewById(R.id.username);
         final EditText passwordText = findViewById(R.id.password);
-        Button loginButton = findViewById(R.id.loginButton);
-        TextView createAccount = findViewById(R.id.createAccount);
+        Button registerInfo = findViewById(R.id.registerButton);
 
-        loginButton.setOnClickListener(new View.OnClickListener() {
+        registerInfo.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
                 username = usernameText.getText().toString();
@@ -75,15 +71,7 @@ public class Login extends AppCompatActivity{
                 Log.v("Main","The saved username was: " + getUsername());
                 Log.v("Main","The saved password was: " + getPassword());
 
-                finish();
-            }
-        });
-        createAccount.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-
-                Log.v("Main","The create textview was clicked");
-
-                Intent myIntent = new Intent(Login.this.getApplicationContext(), Registration.class);
+                Intent myIntent = new Intent(Registration.this.getApplicationContext(), Login.class);
                 startActivity(myIntent);
                 finish();
             }
