@@ -1,158 +1,181 @@
 package edu.oaklandstudent.medicalid;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
-import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
-
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
-import edu.oaklandstudent.medicalid.R;
-import kotlin.Unit;
-import kotlin.jvm.functions.Function2;
+import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.thejuki.kformmaster.item.ListItem;
-import com.thejuki.kformmaster.listener.OnFormElementValueChangedListener;
-import com.thejuki.kformmaster.model.BaseFormElement;
-import com.thejuki.kformmaster.model.FormButtonElement;
-import com.thejuki.kformmaster.model.FormHeader;
-import com.thejuki.kformmaster.model.FormLabelElement;
-import com.thejuki.kformmaster.model.FormPasswordEditTextElement;
-import com.thejuki.kformmaster.model.FormPhoneEditTextElement;
-import com.thejuki.kformmaster.model.FormPickerDateElement;
-import com.thejuki.kformmaster.model.FormPickerDropDownElement;
-import com.thejuki.kformmaster.model.FormSegmentedElement;
-import com.thejuki.kformmaster.model.FormSingleLineEditTextElement;
-import com.thejuki.kformmaster.helper.FormBuildHelper;
 
+import com.ybs.passwordstrengthmeter.PasswordStrength;
 
-public class password extends AppCompatActivity{
+public class password extends AppCompatActivity implements TextWatcher{
 
-    final FormPasswordEditTextElement password = new FormPasswordEditTextElement(1);
-    final FormPasswordEditTextElement confPassword = new FormPasswordEditTextElement(1);
-    public boolean isSet;
-
+    private String passwordText;
+    private String confirmPasswordText;
+    private LinearLayout layoutList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.informationcontainer);
+        setContentView(R.layout.password);
 
+        final View setView = getLayoutInflater().inflate(R.layout.passwordbar,null,false);
+        layoutList = findViewById(R.id.passwordBarLayout);
+        final SharedPreferences prefs = this.getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
+        final SharedPreferences.Editor editor = prefs.edit();
 
+        final EditText password = findViewById(R.id.passwordEditText);
+        passwordText = AESEncryption.decrypt(prefs.getString("password",null));
+        password.setText(getPassword());
+        TextView passwordLabel = findViewById(R.id.passwordLabel);
+        passwordLabel.setText("Password");
 
-        // initialize variables
-        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewic);
+        final EditText confirmPassword = findViewById(R.id.confirmPasswordEditText);
+        TextView confirmPasswordLabel = findViewById(R.id.confirmPasswordLabel);
+        confirmPasswordLabel.setText("Confirm Password");
 
-        FormBuildHelper formBuilder = new FormBuildHelper(new OnFormElementValueChangedListener() {
+        Button saveButton = findViewById(R.id.savePassword);
+        saveButton.setText("Save Password");
+        saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onValueChanged(BaseFormElement baseFormElement) {
-                Log.i("FirstForm", "Something in the form was changed.");
-            }
-        }, mRecyclerView);
+            public void onClick(View view) {
+                passwordText = password.getText().toString();
+                confirmPasswordText = confirmPassword.getText().toString();
 
-        formBuilder.attachRecyclerView(mRecyclerView);
-
-        // Declare our array list of elements
-        List<BaseFormElement<?>> elements = new ArrayList<>();
-
-
-        // First contact
-        final FormHeader header1 = new FormHeader("Emergency Contact 1");
-
-
-        password.setValue(password.getValueAsString());
-        password.setTitle("Password");
-
-
-        confPassword.setValue(confPassword.getValueAsString());
-        confPassword.setTitle("Confirm Password");
-
-
-        FormButtonElement save = new FormButtonElement(4);
-        save.setValue("Save Password");
-            save.getValueObservers().add(new Function2<String, BaseFormElement<String>, Unit>() {
-                @Override
-                public Unit invoke(String newValue, BaseFormElement<String> element) {
-                    if(password.getValueAsString().equals(confPassword.getValueAsString())) {
-
-                        SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = prefs.edit();
-
-                        editor.putString("password", AESEncryption.encrypt(password.getValue()));
+                if(passwordText.equals(confirmPasswordText)){
+                    if(passwordText.length() > 8){
+                        editor.putString("password", AESEncryption.encrypt(passwordText));
                         editor.putString("bioAuth", null); // When we enable password auth, disable biometrics.
+                        editor.commit();
                         editor.apply();
-
-                        Log.v("saved","Password saved");
                         Snackbar.make(findViewById(android.R.id.content), "Password Set!", Snackbar.LENGTH_SHORT).show();
+                        refreshPassword();
+                    }else {
+                        Snackbar.make(findViewById(android.R.id.content), "The passwords is not strong enough!", Snackbar.LENGTH_SHORT).show();
                     }
-                    else{
-
-                        Log.v("error","Passwords don't match");
-                        Snackbar.make(findViewById(android.R.id.content), "Passwords do not match!", Snackbar.LENGTH_SHORT).show();
-
-                    }
-                    Log.v("Main", "The button was pressed.");
-                    return Unit.INSTANCE;
+                }else {
+                    Snackbar.make(findViewById(android.R.id.content), "The passwords do not match!", Snackbar.LENGTH_SHORT).show();
                 }
-            });
-
-        FormButtonElement clear = new FormButtonElement(76);
-        clear.setValue("Clear Password");
-        clear.setValueTextColor(Color.rgb(255, 0, 0));
-        clear.getValueObservers().add(new Function2<String, BaseFormElement<String>, Unit>() {
-            @Override
-            public Unit invoke(String newValue, BaseFormElement<String> element) {
-
-                SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putString("password", null);
-                Snackbar.make(findViewById(android.R.id.content), "Passwords has been cleared.", Snackbar.LENGTH_SHORT).show();
-                Log.v("Main", "The button was pressed.");
-                return Unit.INSTANCE;
+                hideKeyboard();
             }
         });
 
+        Button clearButton = findViewById(R.id.clearPassword);
+        clearButton.setText("Clear Password");
+        clearButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putString("password", null);
+                editor.commit();
+                editor.apply();
+                Snackbar.make(findViewById(android.R.id.content), "Password Cleared!", Snackbar.LENGTH_SHORT).show();
+                refreshPassword();
+                hideKeyboard();
+            }
+        });
 
-        elements.add(header1);
-
-
-        elements.add(password);
-        elements.add(confPassword);
-        elements.add(save);
-        elements.add(clear);
-
-
-        Log.v("Main","password length: " + password.toString().length());
-        formBuilder.addFormElements(elements);
-        // formBuilder.
-
-        SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        password.setValue(AESEncryption.decrypt(prefs.getString("password", null)));
-
-
+        password.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                view = setView;
+                if(hasFocus){
+                    addView(view,password);
+                } else{
+                    removeView(view);
+                }
+            }
+        });
 
     }
 
-    public FormPasswordEditTextElement getPassword(){
-        return password;
+    @Override
+    public void afterTextChanged(Editable s) {
     }
-    public boolean getIsSet(){
-        return isSet;
+    @Override
+    public void beforeTextChanged(
+            CharSequence s, int start, int count, int after) {
     }
 
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+        updatePasswordStrengthView(s.toString());
+    }
 
+    private void updatePasswordStrengthView(String password) {
+
+        ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        TextView strengthView = (TextView) findViewById(R.id.password_strength);
+        if (TextView.VISIBLE != strengthView.getVisibility())
+            return;
+
+        if (password.isEmpty()) {
+            strengthView.setText("");
+            progressBar.setProgress(0);
+            return;
+        }
+
+        PasswordStrength str = PasswordStrength.calculateStrength(password);
+        strengthView.setText(str.getText(this));
+        strengthView.setTextColor(str.getColor());
+
+        progressBar.getProgressDrawable().setColorFilter(str.getColor(), android.graphics.PorterDuff.Mode.SRC_IN);
+        if (str.getText(this).equals("Weak")) {
+            progressBar.setProgress(25);
+        } else if (str.getText(this).equals("Medium")) {
+            progressBar.setProgress(50);
+        } else if (str.getText(this).equals("Strong")) {
+            progressBar.setProgress(75);
+        } else {
+            progressBar.setProgress(100);
+        }
+    }
+
+    public String getPassword(){
+        return passwordText;
+    }
+    private void addView(View view, EditText password) {
+        password.addTextChangedListener(this);
+        layoutList.addView(view);
+
+    }
+
+    private void removeView(View view){
+
+        layoutList.removeView(view);
+
+    }
+
+    private void hideKeyboard(){
+        try {
+            InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+    }
+
+    private void refreshPassword(){
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                finish();
+                startActivity(getIntent());
+            }
+        }, 1000);
+    }
 }

@@ -7,5 +7,9 @@
     <string name="dialog_yes">Yes</string>
     <string name="dialog_no">No</string>
     <string name="nfc_unsupported">Device does not support NFC? :-(</string>
-    <string name="myButton">Button</string>
+    <string name="myButton" translatable="false">Button</string>
+    <string name="password_strength_weak" translatable="false">Weak</string>
+    <string name="password_strength_medium" translatable="false">Medium</string>
+    <string name="password_strength_strong" translatable="false">Strong</string>
+    <string name="password_strength_very_strong" translatable="false">Very Strong</string>
 </resources>
