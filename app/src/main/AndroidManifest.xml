@@ -29,7 +29,7 @@
         <activity android:name="edu.oaklandstudent.medicalid.authFailed" />
         <activity android:name="edu.oaklandstudent.medicalid.password" />
         <activity android:name="edu.oaklandstudent.medicalid.Login" />
-        <activity android:name="edu.oaklandstudent.medicalid.Registration" />
+        <activity android:name="edu.oaklandstudent.medicalid.Registration"/>
         <activity android:name="edu.oaklandstudent.medicalid.Credits" />
         <activity android:name="edu.oaklandstudent.medicalid.About" />
         <activity android:name="edu.oaklandstudent.medicalid.MainActivity">

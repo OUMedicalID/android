@@ -1,5 +1,6 @@
 package edu.oaklandstudent.medicalid;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
@@ -34,7 +35,8 @@ public class password extends AppCompatActivity implements TextWatcher{
 
         final View setView = getLayoutInflater().inflate(R.layout.passwordbar,null,false);
         layoutList = findViewById(R.id.passwordBarLayout);
-        final SharedPreferences prefs = this.getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
+
+        final SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
         final SharedPreferences.Editor editor = prefs.edit();
 
         final EditText password = findViewById(R.id.passwordEditText);
@@ -57,19 +59,15 @@ public class password extends AppCompatActivity implements TextWatcher{
 
                 if(passwordText.equals(confirmPasswordText)){
                     if(passwordText.length() > 8){
-                        editor.putString("password", AESEncryption.encrypt(passwordText));
                         editor.putString("bioAuth", null); // When we enable password auth, disable biometrics.
-                        editor.commit();
-                        editor.apply();
-                        Snackbar.make(findViewById(android.R.id.content), "Password Set!", Snackbar.LENGTH_SHORT).show();
-                        refreshPassword();
+                        savePassword(AESEncryption.encrypt(passwordText),"Password Set!");
                     }else {
                         Snackbar.make(findViewById(android.R.id.content), "The passwords is not strong enough!", Snackbar.LENGTH_SHORT).show();
                     }
                 }else {
                     Snackbar.make(findViewById(android.R.id.content), "The passwords do not match!", Snackbar.LENGTH_SHORT).show();
+                    hideKeyboard();
                 }
-                hideKeyboard();
             }
         });
 
@@ -78,14 +76,7 @@ public class password extends AppCompatActivity implements TextWatcher{
         clearButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putString("password", null);
-                editor.commit();
-                editor.apply();
-                Snackbar.make(findViewById(android.R.id.content), "Password Cleared!", Snackbar.LENGTH_SHORT).show();
-                refreshPassword();
-                hideKeyboard();
+                savePassword(null,"Password Cleared!");
             }
         });
 
@@ -177,5 +168,16 @@ public class password extends AppCompatActivity implements TextWatcher{
                 startActivity(getIntent());
             }
         }, 1000);
+    }
+
+    private void savePassword(@Nullable String thisPassword, String snackResponse){
+        SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("password", thisPassword);
+        editor.commit();
+        editor.apply();
+        Snackbar.make(findViewById(android.R.id.content), snackResponse, Snackbar.LENGTH_SHORT).show();
+        refreshPassword();
+        hideKeyboard();
     }
 }

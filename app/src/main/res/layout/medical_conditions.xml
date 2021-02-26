@@ -17,13 +17,13 @@ android:layout_height="fill_parent">
                     android:gravity="center"
                     android:textSize="25sp"
                     android:layout_margin="15dp"
-                    android:textColor="@color/colorPrimaryDark"></TextView>
+                    android:textColor="@color/colorPrimaryDark" />
 
                 <LinearLayout
                     android:id="@+id/layout_list"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"></LinearLayout>
+                    android:orientation="vertical" />
 
                 <Button
                     android:id="@+id/button_add"
@@ -37,8 +37,7 @@ android:layout_height="fill_parent">
                     android:textColor="@color/cardview_light_background"
                     android:textAllCaps="false"
                     android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    ></Button>
+                    android:paddingRight="10dp" />
 
                 <Button
                     android:id="@+id/button_submit_list"
@@ -52,8 +51,7 @@ android:layout_height="fill_parent">
                     android:textColor="@color/cardview_light_background"
                     android:textAllCaps="false"
                     android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    ></Button>
+                    android:paddingRight="10dp" />
 
         </LinearLayout>
 </ScrollView>
