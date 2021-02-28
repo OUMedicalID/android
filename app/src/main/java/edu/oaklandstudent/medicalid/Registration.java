@@ -1,15 +1,7 @@
 package edu.oaklandstudent.medicalid;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -17,47 +9,19 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Random;
-
-import edu.oaklandstudent.medicalid.R;
-import kotlin.Unit;
-import kotlin.jvm.functions.Function2;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.thejuki.kformmaster.item.ListItem;
-import com.thejuki.kformmaster.listener.OnFormElementValueChangedListener;
-import com.thejuki.kformmaster.model.BaseFormElement;
-import com.thejuki.kformmaster.model.FormButtonElement;
-import com.thejuki.kformmaster.model.FormHeader;
-import com.thejuki.kformmaster.model.FormLabelElement;
-import com.thejuki.kformmaster.model.FormPasswordEditTextElement;
-import com.thejuki.kformmaster.model.FormPhoneEditTextElement;
-import com.thejuki.kformmaster.model.FormPickerDateElement;
-import com.thejuki.kformmaster.model.FormPickerDropDownElement;
-import com.thejuki.kformmaster.model.FormSegmentedElement;
-import com.thejuki.kformmaster.model.FormSingleLineEditTextElement;
-import com.thejuki.kformmaster.helper.FormBuildHelper;
 import com.ybs.passwordstrengthmeter.PasswordStrength;
-
 
 public class Registration extends AppCompatActivity implements TextWatcher {
 
@@ -70,26 +34,21 @@ public class Registration extends AppCompatActivity implements TextWatcher {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.registration);
 
-        final View setView = getLayoutInflater().inflate(R.layout.passwordbar,null,false);
+        final View setView = getLayoutInflater().inflate(R.layout.registrationpasswordbar,null,false);
         layoutList = findViewById(R.id.passwordBarLayout);
         final ScrollView scrollview = findViewById(R.id.scrollPassword);
 
         final EditText usernameText = findViewById(R.id.username);
         final EditText passwordText = findViewById(R.id.password);
         Button registerInfo = findViewById(R.id.registerButton);
-        final int x = registerInfo.getScrollX();
-        final int y = registerInfo.getScrollY();
 
         passwordText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
                 view = setView;
                 if(hasFocus){
-                    /*
-                    Only works if the password edittext has already been clicked
-                    */
+
                     addView(view,passwordText);
-                    scrollview.fullScroll(ScrollView.FOCUS_DOWN);
 
                     // Introduce a timer that will scroll down again after .5 seconds.
                     // Perhaps the view is being created too quickly before it could actually scroll?
@@ -99,9 +58,7 @@ public class Registration extends AppCompatActivity implements TextWatcher {
                         public void run() {
                             scrollview.fullScroll(ScrollView.FOCUS_DOWN);
                         }
-                    }, 500);
-
-
+                    }, 1000);
 
                 } else{
                     removeView(view);
@@ -115,12 +72,27 @@ public class Registration extends AppCompatActivity implements TextWatcher {
                 username = usernameText.getText().toString();
                 password = passwordText.getText().toString();
 
+                usernameText.clearFocus();
+                passwordText.clearFocus();
+
+                hideKeyboard();
+                if(Password_Validation(password)){
+                    Snackbar.make(findViewById(android.R.id.content), "The passwords is saved!", Snackbar.LENGTH_SHORT).show();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Intent myIntent = new Intent(Registration.this.getApplicationContext(), Login.class);
+                            startActivity(myIntent);
+                            finish();
+                        }
+                    }, 500);
+                }else {
+                    Snackbar.make(findViewById(android.R.id.content), "The password is not strong enough!", Snackbar.LENGTH_SHORT).show();
+                }
+
                 Log.v("Main","The saved username was: " + getUsername());
                 Log.v("Main","The saved password was: " + getPassword());
 
-                Intent myIntent = new Intent(Registration.this.getApplicationContext(), Login.class);
-                startActivity(myIntent);
-                finish();
             }
         });
     }
@@ -194,14 +166,26 @@ public class Registration extends AppCompatActivity implements TextWatcher {
         }
     }
 
-    private void refreshPassword(){
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                finish();
-                startActivity(getIntent());
-            }
-        }, 1000);
+    private static boolean Password_Validation(String password)
+    {
+
+        if(password.length() > 8)
+        {
+            Pattern letter = Pattern.compile("[a-zA-z]");
+            Pattern digit = Pattern.compile("[0-9]");
+            Pattern special = Pattern.compile ("[!@#$%&*()_+=|<>?{}\\[\\]~-]");
+
+
+            Matcher hasLetter = letter.matcher(password);
+            Matcher hasDigit = digit.matcher(password);
+            Matcher hasSpecial = special.matcher(password);
+
+            return hasLetter.find() && hasDigit.find() && hasSpecial.find();
+
+        }
+        else
+            return false;
+
     }
 }
 
