@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -89,6 +90,19 @@ public class Registration extends AppCompatActivity implements TextWatcher {
                     */
                     addView(view,passwordText);
                     scrollview.fullScroll(ScrollView.FOCUS_DOWN);
+
+                    // Introduce a timer that will scroll down again after .5 seconds.
+                    // Perhaps the view is being created too quickly before it could actually scroll?
+                    final Handler handler = new Handler(Looper.getMainLooper());
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            scrollview.fullScroll(ScrollView.FOCUS_DOWN);
+                        }
+                    }, 500);
+
+
+
                 } else{
                     removeView(view);
                 }
