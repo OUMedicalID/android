@@ -138,7 +138,7 @@ public class AccidentInformation2 extends AppCompatActivity implements View.OnCl
         if(accidentsList.size()==0){
             SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = prefs.edit();
-            editor.remove("accidentInformation2");
+            editor.remove("MID_Injuries");
             editor.apply();
             result = false;
 
@@ -257,8 +257,8 @@ public class AccidentInformation2 extends AppCompatActivity implements View.OnCl
             JSONObject jsonObject = new JSONObject(inputMap);
             String jsonString = jsonObject.toString();
             SharedPreferences.Editor editor = pSharedPref.edit();
-            editor.remove("accidentInformation2").commit();
-            editor.putString("accidentInformation2", jsonString);
+            editor.remove("MID_Injuries").commit();
+            editor.putString("MID_Injuries", jsonString);
             editor.commit();
         }
     }
@@ -268,7 +268,7 @@ public class AccidentInformation2 extends AppCompatActivity implements View.OnCl
         SharedPreferences pSharedPref = getApplicationContext().getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
         try{
             if (pSharedPref != null){
-                String jsonString = pSharedPref.getString("accidentInformation2", (new JSONObject()).toString());
+                String jsonString = pSharedPref.getString("MID_Injuries", (new JSONObject()).toString());
                 JSONObject jsonObject = new JSONObject(jsonString);
                 Iterator<String> keysItr = jsonObject.keys();
                 while(keysItr.hasNext()) {

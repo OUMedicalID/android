@@ -99,7 +99,7 @@ public class AccidentInformation extends AppCompatActivity implements View.OnCli
         if(accidentList.size()==0){
             SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = prefs.edit();
-            editor.remove("accidentInformation");
+            editor.remove("MID_Injuries");
             editor.apply();
             result = false;
             Snackbar.make(findViewById(android.R.id.content), "Add Condition First!", Snackbar.LENGTH_SHORT).show();
@@ -167,8 +167,8 @@ public class AccidentInformation extends AppCompatActivity implements View.OnCli
             JSONObject jsonObject = new JSONObject(inputMap);
             String jsonString = jsonObject.toString();
             SharedPreferences.Editor editor = pSharedPref.edit();
-            editor.remove("accidentInformation").commit();
-            editor.putString("accidentInformation", jsonString);
+            editor.remove("MID_Injuries").commit();
+            editor.putString("MID_Injuries", jsonString);
             editor.commit();
         }
     }
@@ -180,7 +180,7 @@ public class AccidentInformation extends AppCompatActivity implements View.OnCli
 
         try{
             if (pSharedPref != null){
-                String jsonString = pSharedPref.getString("accidentInformation", (new JSONObject()).toString());
+                String jsonString = pSharedPref.getString("MID_Injuries", (new JSONObject()).toString());
                 JSONObject jsonObject = new JSONObject(jsonString);
                 Iterator<String> keysItr = jsonObject.keys();
                 while(keysItr.hasNext()) {

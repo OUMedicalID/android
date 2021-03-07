@@ -57,7 +57,10 @@ public class MainActivity extends AppCompatActivity {
         Intent myIntent = new Intent(MainActivity.this.getApplicationContext(), Login.class);
         startActivity(myIntent);
 
+        // Print out all records.
 
+        ExportData export = new ExportData();
+        export.getSavedPrefsData(this.getApplicationContext());
 
 
 

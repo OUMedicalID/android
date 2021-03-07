@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -36,6 +37,9 @@ import com.thejuki.kformmaster.model.FormSegmentedElement;
 import com.thejuki.kformmaster.model.FormSingleLineEditTextElement;
 import com.thejuki.kformmaster.helper.FormBuildHelper;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 
 public class EmergencyContacts extends AppCompatActivity{
 
@@ -44,7 +48,6 @@ public class EmergencyContacts extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.informationcontainer);
-
 
 
         // initialize variables
@@ -95,9 +98,6 @@ public class EmergencyContacts extends AppCompatActivity{
         rel2.setTitle("Relationship");
 
 
-
-
-
         elements.add(header1);
         elements.add(name1);
         elements.add(phone1);
@@ -106,7 +106,6 @@ public class EmergencyContacts extends AppCompatActivity{
         elements.add(name2);
         elements.add(phone2);
         elements.add(rel2);
-
 
 
         FormHeader header3 = new FormHeader("Save Information");
@@ -119,14 +118,24 @@ public class EmergencyContacts extends AppCompatActivity{
                 SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = prefs.edit();
 
-                editor.putString("header1", AESEncryption.encrypt(header1.getValue()));
-                editor.putString("name1", AESEncryption.encrypt(name1.getValue()));
-                editor.putString("phone1", AESEncryption.encrypt(phone1.getValue()));
-                editor.putString("rel1", AESEncryption.encrypt(rel1.getValue()));
-                editor.putString("header2", AESEncryption.encrypt(header2.getValue()));
-                editor.putString("name2", AESEncryption.encrypt(name2.getValue()));
-                editor.putString("phone2", AESEncryption.encrypt(phone2.getValue()));
-                editor.putString("rel2", AESEncryption.encrypt(rel2.getValue()));
+
+                if(name1.getValue() != null && phone1.getValue() != null && rel1.getValue() != null) {
+                    ArrayList<String> arrayList = new ArrayList<String>();
+                    arrayList.add(name1.getValue());
+                    arrayList.add(phone1.getValue());
+                    arrayList.add(rel1.getValue());
+                    JSONArray eContact1JSON = new JSONArray(arrayList);
+                    editor.putString("MID_EContact1", AESEncryption.encrypt(eContact1JSON.toString()));
+                }
+                if(name2.getValue() != null && phone2.getValue() != null && rel2.getValue() != null) {
+                    ArrayList<String> arrayList2 = new ArrayList<String>();
+                    arrayList2.add(name2.getValue());
+                    arrayList2.add(phone2.getValue());
+                    arrayList2.add(rel2.getValue());
+                    JSONArray eContact2JSON = new JSONArray(arrayList2);
+                    editor.putString("MID_EContact2", AESEncryption.encrypt(eContact2JSON.toString()));
+                }
+
 
                 editor.apply();
                 Log.v("Main", "The button was pressed.");
@@ -142,14 +151,35 @@ public class EmergencyContacts extends AppCompatActivity{
 
         SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        header1.setValue(AESEncryption.decrypt(prefs.getString("header1", null)));
-        name1.setValue(AESEncryption.decrypt(prefs.getString("name1", null)));
-        phone1.setValue(AESEncryption.decrypt(prefs.getString("phone1", null)));
-        rel1.setValue(AESEncryption.decrypt(prefs.getString("rel1", null)));
-        header2.setValue(AESEncryption.decrypt(prefs.getString("header2", null)));
-        name2.setValue(AESEncryption.decrypt(prefs.getString("name2", null)));
-        phone2.setValue(AESEncryption.decrypt(prefs.getString("phone2", null)));
-        rel2.setValue(AESEncryption.decrypt(prefs.getString("rel2", null)));
+
+        String eContact1JSON = AESEncryption.decrypt(prefs.getString("MID_EContact1", null));
+        if (eContact1JSON != null){
+            try {
+                JSONArray jsonArray = new JSONArray(eContact1JSON);
+                if(jsonArray.getString(0) == null || jsonArray.getString(1) == null || jsonArray.getString(2) == null) return;
+                name1.setValue(jsonArray.getString(0));
+                phone1.setValue(jsonArray.getString(1));
+                rel1.setValue(jsonArray.getString(2));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+    }
+
+
+        String eContact2JSON = AESEncryption.decrypt(prefs.getString("MID_EContact2", null));
+        if (eContact2JSON != null){
+            try {
+                JSONArray jsonArray2 = new JSONArray(eContact2JSON);
+                //Log.wtf("MAINDEBUG", "The arr:" + String.valueOf(jsonArray));
+                if(jsonArray2.getString(0) == null || jsonArray2.getString(1) == null || jsonArray2.getString(2) == null) return;
+                name2.setValue(jsonArray2.getString(0));
+                phone2.setValue(jsonArray2.getString(1));
+                rel2.setValue(jsonArray2.getString(2));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
 
 
 

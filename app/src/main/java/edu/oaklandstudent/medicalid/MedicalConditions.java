@@ -100,7 +100,7 @@ public class MedicalConditions extends AppCompatActivity implements View.OnClick
         if(conditionsList.size()==0){
             SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = prefs.edit();
-            editor.remove("conditionInformation");
+            editor.remove("MID_Conditions");
             editor.apply();
             result = false;
             Snackbar.make(findViewById(android.R.id.content), "Add Condition First!", Snackbar.LENGTH_SHORT).show();
@@ -168,8 +168,8 @@ public class MedicalConditions extends AppCompatActivity implements View.OnClick
             JSONObject jsonObject = new JSONObject(inputMap);
             String jsonString = jsonObject.toString();
             SharedPreferences.Editor editor = pSharedPref.edit();
-            editor.remove("conditionInformation").commit();
-            editor.putString("conditionInformation", jsonString);
+            editor.remove("MID_Conditions").commit();
+            editor.putString("MID_Conditions", jsonString);
             editor.commit();
         }
     }
@@ -181,7 +181,7 @@ public class MedicalConditions extends AppCompatActivity implements View.OnClick
 
         try{
             if (pSharedPref != null){
-                String jsonString = pSharedPref.getString("conditionInformation", (new JSONObject()).toString());
+                String jsonString = pSharedPref.getString("MID_Conditions", (new JSONObject()).toString());
                 JSONObject jsonObject = new JSONObject(jsonString);
                 Iterator<String> keysItr = jsonObject.keys();
                 while(keysItr.hasNext()) {
