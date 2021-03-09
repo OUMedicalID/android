@@ -48,7 +48,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
     <EditText
-        android:id="@+id/username"
+        android:id="@+id/email"
         android:layout_width="910px"
         android:layout_height="72dp"
         android:layout_marginStart="8dp"
@@ -57,9 +57,9 @@
         android:fontFamily="@font/montserrat_semibold"
         android:textSize="40px"
         android:paddingLeft="60dp"
-        android:hint="Username"
+        android:hint="Email"
         android:textColor="#000000"
-        android:background="@drawable/bg_txt_username"
+        android:background="@drawable/bg_txt_email"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
@@ -79,7 +79,7 @@
         android:background="@drawable/bg_txt_password"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/username" />
+        app:layout_constraintTop_toBottomOf="@+id/email" />
 
 
 

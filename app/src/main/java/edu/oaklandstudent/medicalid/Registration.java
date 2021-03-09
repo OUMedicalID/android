@@ -20,12 +20,14 @@ import android.widget.TextView;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.validator.routines.EmailValidator;
+
 import com.google.android.material.snackbar.Snackbar;
 import com.ybs.passwordstrengthmeter.PasswordStrength;
 
 public class Registration extends AppCompatActivity implements TextWatcher {
 
-    private String username;
+    private String email;
     private String password;
     private LinearLayout layoutList;
 
@@ -38,7 +40,7 @@ public class Registration extends AppCompatActivity implements TextWatcher {
         layoutList = findViewById(R.id.passwordBarLayout);
         final ScrollView scrollview = findViewById(R.id.scrollPassword);
 
-        final EditText usernameText = findViewById(R.id.username);
+        final EditText emailText = findViewById(R.id.email);
         final EditText passwordText = findViewById(R.id.password);
         Button registerInfo = findViewById(R.id.registerButton);
 
@@ -69,15 +71,18 @@ public class Registration extends AppCompatActivity implements TextWatcher {
         registerInfo.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-                username = usernameText.getText().toString();
-                password = passwordText.getText().toString();
+                String registerEmail = emailText.getText().toString();
+                String registerPassword = passwordText.getText().toString();
 
-                usernameText.clearFocus();
+                emailText.clearFocus();
                 passwordText.clearFocus();
 
                 hideKeyboard();
-                if(Password_Validation(password)){
-                    Snackbar.make(findViewById(android.R.id.content), "The passwords is saved!", Snackbar.LENGTH_SHORT).show();
+                if(Password_Validation(registerPassword) && Email_Validation(registerEmail)){
+                    email = registerEmail;
+                    password = registerPassword;
+
+                    Snackbar.make(findViewById(android.R.id.content), "The email and password have been saved!", Snackbar.LENGTH_SHORT).show();
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -87,17 +92,24 @@ public class Registration extends AppCompatActivity implements TextWatcher {
                         }
                     }, 500);
                 }else {
-                    Snackbar.make(findViewById(android.R.id.content), "The password is not strong enough!", Snackbar.LENGTH_SHORT).show();
+                    if(!Password_Validation(registerPassword) && !Email_Validation(registerEmail)){
+                        Snackbar.make(findViewById(android.R.id.content), "The password and email are not valid!", Snackbar.LENGTH_SHORT).show();
+                    }
+                    else if(!Password_Validation(registerPassword)){
+                        Snackbar.make(findViewById(android.R.id.content), "The password is not valid!", Snackbar.LENGTH_SHORT).show();
+                    }
+                    else
+                        Snackbar.make(findViewById(android.R.id.content), "The email is not valid!", Snackbar.LENGTH_SHORT).show();
                 }
 
-                Log.v("Main","The saved username was: " + getUsername());
+                Log.v("Main","The saved email was: " + getEmail());
                 Log.v("Main","The saved password was: " + getPassword());
 
             }
         });
     }
-    public String getUsername(){
-        return username;
+    public String getEmail(){
+        return email;
     }
     public String getPassword(){
         return password;
@@ -118,8 +130,8 @@ public class Registration extends AppCompatActivity implements TextWatcher {
 
     private void updatePasswordStrengthView(String password) {
 
-        ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        TextView strengthView = (TextView) findViewById(R.id.password_strength);
+        ProgressBar progressBar = findViewById(R.id.progressBar);
+        TextView strengthView = findViewById(R.id.password_strength);
         if (TextView.VISIBLE != strengthView.getVisibility())
             return;
 
@@ -186,6 +198,17 @@ public class Registration extends AppCompatActivity implements TextWatcher {
         else
             return false;
 
+    }
+
+    private static boolean Email_Validation(String email){
+        boolean valid = EmailValidator.getInstance().isValid(email);
+        boolean allowLocal = true;
+        boolean localValid = EmailValidator.getInstance(allowLocal).isValid(email);
+
+        if(valid && localValid){
+            return true;
+        }
+        else return false;
     }
 }
 
