@@ -2,9 +2,11 @@ package edu.oaklandstudent.medicalid;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -17,6 +19,13 @@ import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,6 +33,17 @@ import org.apache.commons.validator.routines.EmailValidator;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.ybs.passwordstrengthmeter.PasswordStrength;
+
+import okhttp3.Call;
+import okhttp3.FormBody;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
+import static edu.oaklandstudent.medicalid.AESEncryption.MEDICAL_ID_DOMAIN;
+import static edu.oaklandstudent.medicalid.AESEncryption.getSHA512;
 
 public class Registration extends AppCompatActivity implements TextWatcher {
 
@@ -104,6 +124,59 @@ public class Registration extends AppCompatActivity implements TextWatcher {
 
                 Log.v("Main","The saved email was: " + getEmail());
                 Log.v("Main","The saved password was: " + getPassword());
+
+
+
+                String sha512Password = getSHA512(getPassword()).substring(0, 32); // Generate a SHA512 of password
+                //Log.wtf("PASSWORD", getPassword());
+                Log.wtf("PASSWORD", sha512Password);
+
+/*
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    //handle
+                }
+*/
+
+
+                // Store the sha512.
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putString("sha512Key",sha512Password);
+                editor.apply();
+                editor.commit();
+
+
+                final String encryptedEmail = AESEncryption.encrypt(getEmail(), sha512Password);
+
+
+
+                Thread thread = new Thread(new Runnable(){
+                    @Override
+                    public void run() {
+                        try {
+                            final OkHttpClient client = new OkHttpClient();
+                            RequestBody formBody = new FormBody.Builder()
+                                    .add("email", encryptedEmail)
+                                    //.add("password", "test")
+                                    .build();
+
+                            Request request = new Request.Builder()
+                                    .url("https://med.mathew.me/register.php")
+                                    .post(formBody)
+                                    .build();
+
+                            Call call = client.newCall(request);
+                             Response response = call.execute();
+                        } catch (Exception e) {
+                            ///Log.e(TAG, e.getMessage());
+                        }
+                    }
+                });
+                thread.start();
+
+
 
             }
         });

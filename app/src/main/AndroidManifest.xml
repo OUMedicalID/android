@@ -3,6 +3,7 @@
     package="edu.oaklandstudent.medicalid">
 
     <uses-permission android:name="android.permission.NFC" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-feature
         android:name="android.hardware.nfc.hce"
@@ -32,6 +33,7 @@
         <activity android:name="edu.oaklandstudent.medicalid.Registration"/>
         <activity android:name="edu.oaklandstudent.medicalid.Credits" />
         <activity android:name="edu.oaklandstudent.medicalid.About" />
+        <activity android:name="edu.oaklandstudent.medicalid.AESEncryption" />
         <activity android:name="edu.oaklandstudent.medicalid.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -40,7 +40,8 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        String myPassword =  AESEncryption.decrypt(prefs.getString("password", null));
+        String key = prefs.getString("sha512Key", "");
+        String myPassword =  AESEncryption.decrypt(prefs.getString("password", null), key);
         String bioAuth = prefs.getString("bioAuth", "false");
 
 
@@ -143,8 +144,9 @@ public class MainActivity extends AppCompatActivity {
 
                 SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = prefs.edit();
+                String key = prefs.getString("sha512Key", "");
                 String m_Text = input.getText().toString();
-                String pass = AESEncryption.decrypt(prefs.getString("password", null));
+                String pass = AESEncryption.decrypt(prefs.getString("password", null), key);
 
 
                 if(m_Text.equals(pass)){

@@ -40,9 +40,9 @@ public class Home extends Fragment {
 
         SharedPreferences prefs = RootView.getContext().getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
+        String key = prefs.getString("sha512Key", "");
 
-
-        String name = AESEncryption.decrypt(prefs.getString("name", null));
+        String name = AESEncryption.decrypt(prefs.getString("name", null), key);
         if(name != null) {
             tv1.setText("Welcome, " + name + "!");
         }else{

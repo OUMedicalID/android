@@ -117,7 +117,7 @@ public class EmergencyContacts extends AppCompatActivity{
 
                 SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = prefs.edit();
-
+                String key = prefs.getString("sha512Key", "");
 
                 if(name1.getValue() != null && phone1.getValue() != null && rel1.getValue() != null) {
                     ArrayList<String> arrayList = new ArrayList<String>();
@@ -125,7 +125,7 @@ public class EmergencyContacts extends AppCompatActivity{
                     arrayList.add(phone1.getValue());
                     arrayList.add(rel1.getValue());
                     JSONArray eContact1JSON = new JSONArray(arrayList);
-                    editor.putString("MID_EContact1", AESEncryption.encrypt(eContact1JSON.toString()));
+                    editor.putString("MID_EContact1", AESEncryption.encrypt(eContact1JSON.toString(), key));
                 }
                 if(name2.getValue() != null && phone2.getValue() != null && rel2.getValue() != null) {
                     ArrayList<String> arrayList2 = new ArrayList<String>();
@@ -133,7 +133,7 @@ public class EmergencyContacts extends AppCompatActivity{
                     arrayList2.add(phone2.getValue());
                     arrayList2.add(rel2.getValue());
                     JSONArray eContact2JSON = new JSONArray(arrayList2);
-                    editor.putString("MID_EContact2", AESEncryption.encrypt(eContact2JSON.toString()));
+                    editor.putString("MID_EContact2", AESEncryption.encrypt(eContact2JSON.toString(), key));
                 }
 
 
@@ -151,8 +151,8 @@ public class EmergencyContacts extends AppCompatActivity{
 
         SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-
-        String eContact1JSON = AESEncryption.decrypt(prefs.getString("MID_EContact1", null));
+        String key = prefs.getString("sha512Key", "");
+        String eContact1JSON = AESEncryption.decrypt(prefs.getString("MID_EContact1", null), key);
         if (eContact1JSON != null){
             try {
                 JSONArray jsonArray = new JSONArray(eContact1JSON);
@@ -166,7 +166,7 @@ public class EmergencyContacts extends AppCompatActivity{
     }
 
 
-        String eContact2JSON = AESEncryption.decrypt(prefs.getString("MID_EContact2", null));
+        String eContact2JSON = AESEncryption.decrypt(prefs.getString("MID_EContact2", null), key);
         if (eContact2JSON != null){
             try {
                 JSONArray jsonArray2 = new JSONArray(eContact2JSON);

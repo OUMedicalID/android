@@ -60,9 +60,10 @@ public class AccidentInformation extends AppCompatActivity implements View.OnCli
                 if(checkIfValidAndRead()){
                     SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = prefs.edit();
+                    String key = prefs.getString("sha512Key", "");
                     HashMap<String,String> myMap = new HashMap<>();
                     for(int j = 0;j < accidentList.size();j++) {
-                        myMap.put(Integer.toString(j),AESEncryption.encrypt(accidentList.get(j)));
+                        myMap.put(Integer.toString(j),AESEncryption.encrypt(accidentList.get(j), key));
                     }
                     saveMap(myMap);
                     editor.commit();
@@ -136,6 +137,7 @@ public class AccidentInformation extends AppCompatActivity implements View.OnCli
 
         SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
+        String key = prefs.getString("sha512Key", "");
         Map<String,String> restoreMap = new HashMap<>();
         restoreMap = loadMap();
 
@@ -145,7 +147,7 @@ public class AccidentInformation extends AppCompatActivity implements View.OnCli
                 final View conditionsView = getLayoutInflater().inflate(R.layout.row_add, null, false);
 
                 EditText editText = (EditText) conditionsView.findViewById(R.id.row_add);
-                editText.setText(AESEncryption.decrypt(restoreMap.get(Integer.toString(i))));
+                editText.setText(AESEncryption.decrypt(restoreMap.get(Integer.toString(i)), key));
                 ImageView imageClose = (ImageView) conditionsView.findViewById(R.id.image_remove);
 
                 imageClose.setOnClickListener(new View.OnClickListener() {

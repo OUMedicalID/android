@@ -39,9 +39,10 @@ public class password extends AppCompatActivity implements TextWatcher{
 
         final SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
         final SharedPreferences.Editor editor = prefs.edit();
+        final String key = prefs.getString("sha512Key", "");
 
         final EditText password = findViewById(R.id.passwordEditText);
-        passwordText = AESEncryption.decrypt(prefs.getString("password",null));
+        passwordText = AESEncryption.decrypt(prefs.getString("password",null), key);
         password.setText(getPassword());
         TextView passwordLabel = findViewById(R.id.passwordLabel);
         passwordLabel.setText("Password");
@@ -62,7 +63,7 @@ public class password extends AppCompatActivity implements TextWatcher{
                 if(passwordText.equals(confirmPasswordText)){
                     if(Password_Validation(passwordText)){
                         editor.putString("bioAuth", null); // When we enable password auth, disable biometrics.
-                        savePassword(AESEncryption.encrypt(passwordText),"Password Set!");
+                        savePassword(AESEncryption.encrypt(passwordText, key),"Password Set!");
                     }else {
                         Snackbar.make(findViewById(android.R.id.content), "The password is not strong enough!", Snackbar.LENGTH_SHORT).show();
                     }
