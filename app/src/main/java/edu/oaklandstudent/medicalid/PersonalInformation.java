@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 
 import kotlin.Unit;
@@ -32,6 +33,8 @@ import com.thejuki.kformmaster.model.FormPickerDateElement;
 import com.thejuki.kformmaster.model.FormPickerDropDownElement;
 import com.thejuki.kformmaster.model.FormSingleLineEditTextElement;
 import com.thejuki.kformmaster.helper.FormBuildHelper;
+
+import org.json.JSONObject;
 
 
 public class PersonalInformation extends AppCompatActivity{
@@ -236,6 +239,9 @@ public class PersonalInformation extends AppCompatActivity{
                 Snackbar.make(findViewById(android.R.id.content), "Information Saved!", Snackbar.LENGTH_SHORT).show();
 
 
+                ExportData export = new ExportData();
+                export.getSavedPrefsData(getApplicationContext());
+
                 return Unit.INSTANCE;
             }
         });
@@ -276,6 +282,11 @@ public class PersonalInformation extends AppCompatActivity{
         SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         String key = prefs.getString("sha512Key", "");
+
+
+
+
+
 
         name.setValue(AESEncryption.decrypt(prefs.getString("MID_Name", null),key));
         street.setValue(AESEncryption.decrypt(prefs.getString("MID_Address1", null),key));

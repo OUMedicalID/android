@@ -6,6 +6,9 @@ package edu.oaklandstudent.medicalid;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 
@@ -17,7 +20,9 @@ public class AESEncryption{
     private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
 
     public static String encrypt(String value, String key) {
-        
+
+        if(value == null) return "";
+
         try {
             IvParameterSpec iv = new IvParameterSpec(initVector.getBytes("UTF-8"));
             SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
@@ -35,7 +40,7 @@ public class AESEncryption{
 
     public static String decrypt(String encrypted, String key) {
 
-
+        if(encrypted == null) return "";
 
         try {
             IvParameterSpec iv = new IvParameterSpec(initVector.getBytes("UTF-8"));
@@ -91,6 +96,41 @@ public class AESEncryption{
     }
 
 
+    public static String hexadecimal(String input, String charsetName){
+        try{
+            return asHex(input.getBytes(charsetName));
+        }catch(IOException e) {
+            return "";
+        }
+    }
 
+    private static final char[] HEX_CHARS = "0123456789ABCDEF".toCharArray();
+
+    public static String asHex(byte[] buf)
+    {
+        char[] chars = new char[2 * buf.length];
+        for (int i = 0; i < buf.length; ++i)
+        {
+            chars[2 * i] = HEX_CHARS[(buf[i] & 0xF0) >>> 4];
+            chars[2 * i + 1] = HEX_CHARS[buf[i] & 0x0F];
+        }
+        return new String(chars);
+    }
+
+
+    public static String convertHexToStringValue(String hex) {
+        if(hex == null)return null;
+        StringBuilder stringbuilder = new StringBuilder();
+        char[] hexData = hex.toCharArray();
+        for (int count = 0; count < hexData.length - 1; count += 2) {
+            int firstDigit = Character.digit(hexData[count], 16);
+            int lastDigit = Character.digit(hexData[count + 1], 16);
+            int decimal = firstDigit * 16 + lastDigit;
+            stringbuilder.append((char)decimal);
+        }
+        return stringbuilder.toString();
+    }
 }
+
+
 

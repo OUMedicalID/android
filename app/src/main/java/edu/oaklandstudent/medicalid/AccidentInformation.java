@@ -20,6 +20,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import static edu.oaklandstudent.medicalid.AESEncryption.convertHexToStringValue;
+import static edu.oaklandstudent.medicalid.AESEncryption.hexadecimal;
+
 public class AccidentInformation extends AppCompatActivity implements View.OnClickListener{
 
     LinearLayout layoutList;
@@ -67,6 +70,9 @@ public class AccidentInformation extends AppCompatActivity implements View.OnCli
                     }
                     saveMap(myMap);
                     editor.commit();
+                    ExportData export = new ExportData();
+                    export.getSavedPrefsData(getApplicationContext());
+
                     Snackbar.make(findViewById(android.R.id.content), "Information Saved!", Snackbar.LENGTH_SHORT).show();
                 }
 
@@ -168,6 +174,7 @@ public class AccidentInformation extends AppCompatActivity implements View.OnCli
         if (pSharedPref != null){
             JSONObject jsonObject = new JSONObject(inputMap);
             String jsonString = jsonObject.toString();
+            jsonString = hexadecimal(jsonString, "utf-8");
             SharedPreferences.Editor editor = pSharedPref.edit();
             editor.remove("MID_Injuries").commit();
             editor.putString("MID_Injuries", jsonString);
@@ -183,6 +190,7 @@ public class AccidentInformation extends AppCompatActivity implements View.OnCli
         try{
             if (pSharedPref != null){
                 String jsonString = pSharedPref.getString("MID_Injuries", (new JSONObject()).toString());
+                jsonString = convertHexToStringValue(jsonString);
                 JSONObject jsonObject = new JSONObject(jsonString);
                 Iterator<String> keysItr = jsonObject.keys();
                 while(keysItr.hasNext()) {

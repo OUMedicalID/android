@@ -20,6 +20,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import static edu.oaklandstudent.medicalid.AESEncryption.convertHexToStringValue;
+import static edu.oaklandstudent.medicalid.AESEncryption.hexadecimal;
+
 
 public class MedicalConditions extends AppCompatActivity implements View.OnClickListener{
 
@@ -68,6 +71,11 @@ public class MedicalConditions extends AppCompatActivity implements View.OnClick
                     }
                     saveMap(myMap);
                     editor.commit();
+
+                    ExportData export = new ExportData();
+                    export.getSavedPrefsData(getApplicationContext());
+
+
                     Snackbar.make(findViewById(android.R.id.content), "Information Saved!", Snackbar.LENGTH_SHORT).show();
                 }
 
@@ -169,6 +177,7 @@ public class MedicalConditions extends AppCompatActivity implements View.OnClick
         if (pSharedPref != null){
             JSONObject jsonObject = new JSONObject(inputMap);
             String jsonString = jsonObject.toString();
+            jsonString = hexadecimal(jsonString, "utf-8");
             SharedPreferences.Editor editor = pSharedPref.edit();
             editor.remove("MID_Conditions").commit();
             editor.putString("MID_Conditions", jsonString);
@@ -184,6 +193,7 @@ public class MedicalConditions extends AppCompatActivity implements View.OnClick
         try{
             if (pSharedPref != null){
                 String jsonString = pSharedPref.getString("MID_Conditions", (new JSONObject()).toString());
+                jsonString = convertHexToStringValue(jsonString);
                 JSONObject jsonObject = new JSONObject(jsonString);
                 Iterator<String> keysItr = jsonObject.keys();
                 while(keysItr.hasNext()) {

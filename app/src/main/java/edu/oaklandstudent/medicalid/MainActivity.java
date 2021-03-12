@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         String key = prefs.getString("sha512Key", "");
         String myPassword =  AESEncryption.decrypt(prefs.getString("password", null), key);
         String bioAuth = prefs.getString("bioAuth", "false");
+        String isLoggedIn = prefs.getString("isLoggedIn", "false");
 
 
         if(myPassword != null && !myPassword.equals("")){
@@ -55,13 +56,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        Intent myIntent = new Intent(MainActivity.this.getApplicationContext(), Login.class);
-        startActivity(myIntent);
+        if(isLoggedIn.equals("false")) {
+            Intent myIntent = new Intent(MainActivity.this.getApplicationContext(), Login.class);
+            startActivity(myIntent);
+            // Print out all records.
+        }
 
-        // Print out all records.
-
-        ExportData export = new ExportData();
-        export.getSavedPrefsData(this.getApplicationContext());
 
 
 

@@ -42,7 +42,7 @@ public class Home extends Fragment {
         SharedPreferences.Editor editor = prefs.edit();
         String key = prefs.getString("sha512Key", "");
 
-        String name = AESEncryption.decrypt(prefs.getString("name", null), key);
+        String name = AESEncryption.decrypt(prefs.getString("MID_Name", null), key);
         if(name != null) {
             tv1.setText("Welcome, " + name + "!");
         }else{

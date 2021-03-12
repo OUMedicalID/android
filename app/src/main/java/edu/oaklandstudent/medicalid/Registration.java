@@ -1,6 +1,8 @@
 package edu.oaklandstudent.medicalid;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -141,8 +143,8 @@ public class Registration extends AppCompatActivity implements TextWatcher {
 
 
                 // Store the sha512.
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                SharedPreferences.Editor editor = preferences.edit();
+                SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = prefs.edit();
                 editor.putString("sha512Key",sha512Password);
                 editor.apply();
                 editor.commit();
@@ -167,7 +169,7 @@ public class Registration extends AppCompatActivity implements TextWatcher {
                                     .post(formBody)
                                     .build();
 
-                            Call call = client.newCall(request);
+                             Call call = client.newCall(request);
                              Response response = call.execute();
                         } catch (Exception e) {
                             ///Log.e(TAG, e.getMessage());

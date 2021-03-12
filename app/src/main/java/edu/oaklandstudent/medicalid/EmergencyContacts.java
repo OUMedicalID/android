@@ -40,6 +40,9 @@ import com.thejuki.kformmaster.helper.FormBuildHelper;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import static edu.oaklandstudent.medicalid.AESEncryption.convertHexToStringValue;
+import static edu.oaklandstudent.medicalid.AESEncryption.hexadecimal;
+
 
 public class EmergencyContacts extends AppCompatActivity{
 
@@ -125,7 +128,7 @@ public class EmergencyContacts extends AppCompatActivity{
                     arrayList.add(phone1.getValue());
                     arrayList.add(rel1.getValue());
                     JSONArray eContact1JSON = new JSONArray(arrayList);
-                    editor.putString("MID_EContact1", AESEncryption.encrypt(eContact1JSON.toString(), key));
+                    editor.putString("MID_EContact1", AESEncryption.encrypt(hexadecimal(eContact1JSON.toString(), "utf-8"), key));
                 }
                 if(name2.getValue() != null && phone2.getValue() != null && rel2.getValue() != null) {
                     ArrayList<String> arrayList2 = new ArrayList<String>();
@@ -133,12 +136,15 @@ public class EmergencyContacts extends AppCompatActivity{
                     arrayList2.add(phone2.getValue());
                     arrayList2.add(rel2.getValue());
                     JSONArray eContact2JSON = new JSONArray(arrayList2);
-                    editor.putString("MID_EContact2", AESEncryption.encrypt(eContact2JSON.toString(), key));
+                    editor.putString("MID_EContact2", AESEncryption.encrypt(hexadecimal(eContact2JSON.toString(), "utf-8"), key));
                 }
 
 
                 editor.apply();
                 Log.v("Main", "The button was pressed.");
+
+                ExportData export = new ExportData();
+                export.getSavedPrefsData(getApplicationContext());
 
                 Snackbar.make(findViewById(android.R.id.content), "Information Saved!", Snackbar.LENGTH_SHORT).show();
                 return Unit.INSTANCE;
@@ -153,6 +159,7 @@ public class EmergencyContacts extends AppCompatActivity{
         SharedPreferences.Editor editor = prefs.edit();
         String key = prefs.getString("sha512Key", "");
         String eContact1JSON = AESEncryption.decrypt(prefs.getString("MID_EContact1", null), key);
+        eContact1JSON = convertHexToStringValue(eContact1JSON);
         if (eContact1JSON != null){
             try {
                 JSONArray jsonArray = new JSONArray(eContact1JSON);
@@ -167,6 +174,7 @@ public class EmergencyContacts extends AppCompatActivity{
 
 
         String eContact2JSON = AESEncryption.decrypt(prefs.getString("MID_EContact2", null), key);
+        eContact2JSON = convertHexToStringValue(eContact2JSON);
         if (eContact2JSON != null){
             try {
                 JSONArray jsonArray2 = new JSONArray(eContact2JSON);
