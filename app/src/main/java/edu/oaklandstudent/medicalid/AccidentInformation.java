@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,23 +13,33 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import static edu.oaklandstudent.medicalid.AESEncryption.convertHexToStringValue;
 import static edu.oaklandstudent.medicalid.AESEncryption.hexadecimal;
 
-public class AccidentInformation extends AppCompatActivity implements View.OnClickListener{
+
+public class AccidentInformation extends AppCompatActivity implements View.OnClickListener {
 
     LinearLayout layoutList;
     Button buttonAdd;
     Button buttonSubmitList;
-    ArrayList<String> accidentList = new ArrayList<String>();
+    ArrayList<String> conditionsList = new ArrayList<String>();
 
 
     @Override
@@ -50,7 +61,7 @@ public class AccidentInformation extends AppCompatActivity implements View.OnCli
     @Override
     public void onClick(View v) {
 
-        switch (v.getId()){
+        switch (v.getId()) {
 
             case R.id.button_add:
 
@@ -60,18 +71,32 @@ public class AccidentInformation extends AppCompatActivity implements View.OnCli
 
             case R.id.button_submit_list:
 
-                if(checkIfValidAndRead()){
+                if (checkIfValidAndRead()) {
                     SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = prefs.edit();
                     String key = prefs.getString("sha512Key", "");
-                    HashMap<String,String> myMap = new HashMap<>();
-                    for(int j = 0;j < accidentList.size();j++) {
-                        myMap.put(Integer.toString(j),AESEncryption.encrypt(accidentList.get(j), key));
+
+                    String[] ourConditionsList = new String[conditionsList.size()];
+
+                    for (int j = 0; j < conditionsList.size(); j++) {
+                        ourConditionsList[j] = conditionsList.get(j);
                     }
-                    saveMap(myMap);
+
+
+                    Gson gson = new GsonBuilder().create();
+                    String jsonArray = gson.toJson(ourConditionsList);
+                    Log.wtf("CONDITIONS", jsonArray);
+                    String encryptedJSON = AESEncryption.encrypt(jsonArray, key);
+                    editor.remove("MID_Injuries").commit();
+                    editor.putString("MID_Injuries", encryptedJSON);
                     editor.commit();
+
+
+
+
                     ExportData export = new ExportData();
                     export.getSavedPrefsData(getApplicationContext());
+
 
                     Snackbar.make(findViewById(android.R.id.content), "Information Saved!", Snackbar.LENGTH_SHORT).show();
                 }
@@ -85,32 +110,32 @@ public class AccidentInformation extends AppCompatActivity implements View.OnCli
 
     private boolean checkIfValidAndRead() {
 
-        accidentList.clear();
+        conditionsList.clear();
         boolean result = true;
 
-        for(int i=0;i<layoutList.getChildCount();i++){
+        for (int i = 0; i < layoutList.getChildCount(); i++) {
 
             View conditionsView = layoutList.getChildAt(i);
 
-            EditText editTextName = (EditText)conditionsView.findViewById(R.id.row_add);
+            EditText editTextName = (EditText) conditionsView.findViewById(R.id.row_add);
 
-            if(!editTextName.getText().toString().equals("")){
-                accidentList.add(editTextName.getText().toString());
-            }else {
+            if (!editTextName.getText().toString().equals("")) {
+                conditionsList.add(editTextName.getText().toString());
+            } else {
                 result = false;
                 break;
             }
 
         }
 
-        if(accidentList.size()==0){
+        if (conditionsList.size() == 0) {
             SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = prefs.edit();
             editor.remove("MID_Injuries");
             editor.apply();
             result = false;
             Snackbar.make(findViewById(android.R.id.content), "Add Condition First!", Snackbar.LENGTH_SHORT).show();
-        }else if(!result){
+        } else if (!result) {
             Snackbar.make(findViewById(android.R.id.content), "Enter All Details Correctly!", Snackbar.LENGTH_SHORT).show();
         }
 
@@ -119,9 +144,9 @@ public class AccidentInformation extends AppCompatActivity implements View.OnCli
 
     private void addView() {
 
-        final View conditionsView = getLayoutInflater().inflate(R.layout.row_add,null,false);
-        EditText editText = (EditText)conditionsView.findViewById(R.id.row_add);
-        ImageView imageClose = (ImageView)conditionsView.findViewById(R.id.image_remove);
+        final View conditionsView = getLayoutInflater().inflate(R.layout.row_add, null, false);
+        EditText editText = (EditText) conditionsView.findViewById(R.id.row_add);
+        ImageView imageClose = (ImageView) conditionsView.findViewById(R.id.image_remove);
 
         imageClose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,54 +159,73 @@ public class AccidentInformation extends AppCompatActivity implements View.OnCli
 
     }
 
-    private void removeView(View view){
+    private void removeView(View view) {
 
         layoutList.removeView(view);
 
     }
-    public void restore(){
+
+    public void restore() {
 
         SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         String key = prefs.getString("sha512Key", "");
-        Map<String,String> restoreMap = new HashMap<>();
-        restoreMap = loadMap();
 
-        if(restoreMap == null) return;
-        else{
-            for(int i = 0;i < restoreMap.size();i++) {
-                final View conditionsView = getLayoutInflater().inflate(R.layout.row_add, null, false);
+        String conditions = prefs.getString("MID_Injuries", "");
+        String conditionsDecoded = AESEncryption.decrypt(conditions, key);
 
-                EditText editText = (EditText) conditionsView.findViewById(R.id.row_add);
-                editText.setText(AESEncryption.decrypt(restoreMap.get(Integer.toString(i)), key));
-                ImageView imageClose = (ImageView) conditionsView.findViewById(R.id.image_remove);
+        if(conditionsDecoded == null)return;
+        if (conditionsDecoded.equals("")) return;
 
-                imageClose.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        removeView(conditionsView);
-                    }
-                });
 
-                layoutList.addView(conditionsView);
-            }
+        Gson gson = new Gson();
+        String jsonOutput = conditionsDecoded;
+        Type listType = new TypeToken<List<String>>() {
+        }.getType();
+        List<String> posts = gson.fromJson(jsonOutput, listType);
+        Log.wtf("CONDITIONS", "X:| " + String.valueOf(posts));
+
+
+
+        for(int i = 0;i < posts.size();i++) {
+            Log.wtf("CONDITIONS", "X:| "+ String.valueOf(posts.get(i)));
+            final View conditionsView = getLayoutInflater().inflate(R.layout.row_add, null, false);
+
+            EditText editText = (EditText) conditionsView.findViewById(R.id.row_add);
+            editText.setText((CharSequence) posts.get(i));
+            ImageView imageClose = (ImageView) conditionsView.findViewById(R.id.image_remove);
+
+            imageClose.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    removeView(conditionsView);
+                }
+            });
+
+            layoutList.addView(conditionsView);
         }
     }
-    private void saveMap(Map<String,String> inputMap){
+}
+
+
+
+
+    /*
+    private void saveArray(String[] array){
 
         SharedPreferences pSharedPref = getApplicationContext().getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
 
         if (pSharedPref != null){
-            JSONObject jsonObject = new JSONObject(inputMap);
+            JSONArray jsonObject = new JSONArray(array);
             String jsonString = jsonObject.toString();
             jsonString = hexadecimal(jsonString, "utf-8");
             SharedPreferences.Editor editor = pSharedPref.edit();
-            editor.remove("MID_Injuries").commit();
-            editor.putString("MID_Injuries", jsonString);
+            editor.remove("MID_Conditions").commit();
+            editor.putString("MID_Conditions", jsonString);
             editor.commit();
         }
-    }
-
+    }*/
+/*
     private Map<String,String> loadMap(){
 
         Map<String,String> outputMap = new HashMap<String,String>();
@@ -189,9 +233,9 @@ public class AccidentInformation extends AppCompatActivity implements View.OnCli
 
         try{
             if (pSharedPref != null){
-                String jsonString = pSharedPref.getString("MID_Injuries", (new JSONObject()).toString());
+                String jsonString = pSharedPref.getString("MID_Conditions", (new JSONArray()).toString());
                 jsonString = convertHexToStringValue(jsonString);
-                JSONObject jsonObject = new JSONObject(jsonString);
+                JSONArray jsonObject = new JSONArray(jsonString);
                 Iterator<String> keysItr = jsonObject.keys();
                 while(keysItr.hasNext()) {
                     String key = keysItr.next();
@@ -204,4 +248,5 @@ public class AccidentInformation extends AppCompatActivity implements View.OnCli
         }
         return outputMap;
     }
-}
+
+    */

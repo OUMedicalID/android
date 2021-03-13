@@ -44,7 +44,8 @@ public class ExportData {
                 try {
                     FormBody.Builder builder = new FormBody.Builder();
                     for ( Map.Entry<String, String> entry : params.entrySet() ) {
-                        if(entry.getKey().equals("isLoggedIn") || entry.getKey().equals("sha512Key") )continue;
+                        //(entry.getKey().equals("isLoggedIn") || entry.getKey().equals("sha512Key") )continue;
+                        if(entry.getKey().startsWith("MID_") == false && !entry.getKey().equals("email")){continue;}
                         builder.add( entry.getKey(), entry.getValue() );
                     }
 

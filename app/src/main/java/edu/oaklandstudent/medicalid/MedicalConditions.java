@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,19 +13,28 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import static edu.oaklandstudent.medicalid.AESEncryption.convertHexToStringValue;
 import static edu.oaklandstudent.medicalid.AESEncryption.hexadecimal;
 
 
-public class MedicalConditions extends AppCompatActivity implements View.OnClickListener{
+public class MedicalConditions extends AppCompatActivity implements View.OnClickListener {
 
     LinearLayout layoutList;
     Button buttonAdd;
@@ -51,7 +61,7 @@ public class MedicalConditions extends AppCompatActivity implements View.OnClick
     @Override
     public void onClick(View v) {
 
-        switch (v.getId()){
+        switch (v.getId()) {
 
             case R.id.button_add:
 
@@ -61,20 +71,28 @@ public class MedicalConditions extends AppCompatActivity implements View.OnClick
 
             case R.id.button_submit_list:
 
-                if(checkIfValidAndRead()){
+                if (checkIfValidAndRead()) {
                     SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = prefs.edit();
                     String key = prefs.getString("sha512Key", "");
-                    HashMap<String,String> myMap = new HashMap<>();
-                    for(int j = 0;j < conditionsList.size();j++) {
-                        myMap.put(Integer.toString(j),AESEncryption.encrypt(conditionsList.get(j), key));
+
+                    String[] ourConditionsList = new String[conditionsList.size()];
+
+                    for (int j = 0; j < conditionsList.size(); j++) {
+                        ourConditionsList[j] = conditionsList.get(j);
                     }
-                    saveMap(myMap);
+
+
+                    Gson gson = new GsonBuilder().create();
+                    String jsonArray = gson.toJson(ourConditionsList);
+                    Log.wtf("CONDITIONS", jsonArray);
+                    String encryptedJSON = AESEncryption.encrypt(jsonArray, key);
+                    editor.remove("MID_Conditions").commit();
+                    editor.putString("MID_Conditions", encryptedJSON);
                     editor.commit();
 
                     ExportData export = new ExportData();
                     export.getSavedPrefsData(getApplicationContext());
-
 
                     Snackbar.make(findViewById(android.R.id.content), "Information Saved!", Snackbar.LENGTH_SHORT).show();
                 }
@@ -91,29 +109,29 @@ public class MedicalConditions extends AppCompatActivity implements View.OnClick
         conditionsList.clear();
         boolean result = true;
 
-        for(int i=0;i<layoutList.getChildCount();i++){
+        for (int i = 0; i < layoutList.getChildCount(); i++) {
 
             View conditionsView = layoutList.getChildAt(i);
 
-            EditText editTextName = (EditText)conditionsView.findViewById(R.id.row_add);
+            EditText editTextName = (EditText) conditionsView.findViewById(R.id.row_add);
 
-            if(!editTextName.getText().toString().equals("")){
+            if (!editTextName.getText().toString().equals("")) {
                 conditionsList.add(editTextName.getText().toString());
-            }else {
+            } else {
                 result = false;
                 break;
             }
 
         }
 
-        if(conditionsList.size()==0){
+        if (conditionsList.size() == 0) {
             SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = prefs.edit();
             editor.remove("MID_Conditions");
             editor.apply();
             result = false;
             Snackbar.make(findViewById(android.R.id.content), "Add Condition First!", Snackbar.LENGTH_SHORT).show();
-        }else if(!result){
+        } else if (!result) {
             Snackbar.make(findViewById(android.R.id.content), "Enter All Details Correctly!", Snackbar.LENGTH_SHORT).show();
         }
 
@@ -122,9 +140,9 @@ public class MedicalConditions extends AppCompatActivity implements View.OnClick
 
     private void addView() {
 
-        final View conditionsView = getLayoutInflater().inflate(R.layout.row_add,null,false);
-        EditText editText = (EditText)conditionsView.findViewById(R.id.row_add);
-        ImageView imageClose = (ImageView)conditionsView.findViewById(R.id.image_remove);
+        final View conditionsView = getLayoutInflater().inflate(R.layout.row_add, null, false);
+        EditText editText = (EditText) conditionsView.findViewById(R.id.row_add);
+        ImageView imageClose = (ImageView) conditionsView.findViewById(R.id.image_remove);
 
         imageClose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,26 +155,39 @@ public class MedicalConditions extends AppCompatActivity implements View.OnClick
 
     }
 
-    private void removeView(View view){
+    private void removeView(View view) {
 
         layoutList.removeView(view);
 
     }
-    public void restore(){
+
+    public void restore() {
 
         SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         String key = prefs.getString("sha512Key", "");
-        Map<String,String> restoreMap = new HashMap<>();
-        restoreMap = loadMap();
 
-        if(restoreMap == null) return;
-        else{
-            for(int i = 0;i < restoreMap.size();i++) {
+        String conditions = prefs.getString("MID_Conditions", "");
+        String conditionsDecoded = AESEncryption.decrypt(conditions, key);
+
+        if(conditionsDecoded == null)return;
+        if (conditionsDecoded.equals("")) return;
+
+        Gson gson = new Gson();
+        String jsonOutput = conditionsDecoded;
+        Type listType = new TypeToken<List<String>>() {
+        }.getType();
+        List<String> posts = gson.fromJson(jsonOutput, listType);
+        Log.wtf("CONDITIONS", "X:| " + String.valueOf(posts));
+
+
+
+            for(int i = 0;i < posts.size();i++) {
+                Log.wtf("CONDITIONS", "X:| "+ String.valueOf(posts.get(i)));
                 final View conditionsView = getLayoutInflater().inflate(R.layout.row_add, null, false);
 
                 EditText editText = (EditText) conditionsView.findViewById(R.id.row_add);
-                editText.setText(AESEncryption.decrypt(restoreMap.get(Integer.toString(i)), key));
+                editText.setText((CharSequence) posts.get(i));
                 ImageView imageClose = (ImageView) conditionsView.findViewById(R.id.image_remove);
 
                 imageClose.setOnClickListener(new View.OnClickListener() {
@@ -170,12 +201,17 @@ public class MedicalConditions extends AppCompatActivity implements View.OnClick
             }
         }
     }
-    private void saveMap(Map<String,String> inputMap){
+
+
+
+
+    /*
+    private void saveArray(String[] array){
 
         SharedPreferences pSharedPref = getApplicationContext().getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
 
         if (pSharedPref != null){
-            JSONObject jsonObject = new JSONObject(inputMap);
+            JSONArray jsonObject = new JSONArray(array);
             String jsonString = jsonObject.toString();
             jsonString = hexadecimal(jsonString, "utf-8");
             SharedPreferences.Editor editor = pSharedPref.edit();
@@ -183,8 +219,8 @@ public class MedicalConditions extends AppCompatActivity implements View.OnClick
             editor.putString("MID_Conditions", jsonString);
             editor.commit();
         }
-    }
-
+    }*/
+/*
     private Map<String,String> loadMap(){
 
         Map<String,String> outputMap = new HashMap<String,String>();
@@ -192,9 +228,9 @@ public class MedicalConditions extends AppCompatActivity implements View.OnClick
 
         try{
             if (pSharedPref != null){
-                String jsonString = pSharedPref.getString("MID_Conditions", (new JSONObject()).toString());
+                String jsonString = pSharedPref.getString("MID_Conditions", (new JSONArray()).toString());
                 jsonString = convertHexToStringValue(jsonString);
-                JSONObject jsonObject = new JSONObject(jsonString);
+                JSONArray jsonObject = new JSONArray(jsonString);
                 Iterator<String> keysItr = jsonObject.keys();
                 while(keysItr.hasNext()) {
                     String key = keysItr.next();
@@ -207,4 +243,5 @@ public class MedicalConditions extends AppCompatActivity implements View.OnClick
         }
         return outputMap;
     }
-}
+
+    */
