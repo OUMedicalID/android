@@ -11,17 +11,42 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
+import java.security.SecureRandom;
+import java.util.Random;
 
 
 public class AESEncryption{
 
     public static String MEDICAL_ID_DOMAIN = "https://med.mathew.me";
-    private static final String initVector = "0000000000000000";
     private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
 
     public static String encrypt(String value, String key) {
 
         if(value == null) return "";
+
+        String initVector = generateRandomString(16);
+
+        try {
+            IvParameterSpec iv = new IvParameterSpec(initVector.getBytes("UTF-8"));
+            SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
+
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
+            cipher.init(Cipher.ENCRYPT_MODE, skeySpec, iv);
+
+            byte[] encrypted = cipher.doFinal(value.getBytes());
+            return  bytesToHex(encrypted) + ":" + initVector;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+
+    public static String encryptEmail(String value, String key) {
+
+        if(value == null) return "";
+
+        String initVector = rightPadZeros(hexadecimal(value, "utf-8"), 16).substring(0, 16);
 
         try {
             IvParameterSpec iv = new IvParameterSpec(initVector.getBytes("UTF-8"));
@@ -40,15 +65,18 @@ public class AESEncryption{
 
     public static String decrypt(String encrypted, String key) {
 
-        if(encrypted == null) return "";
+        if(encrypted == null || encrypted.equals("")) return "";
+
+        String[] data = encrypted.split(":");
+
 
         try {
-            IvParameterSpec iv = new IvParameterSpec(initVector.getBytes("UTF-8"));
+            IvParameterSpec iv = new IvParameterSpec(data[1].getBytes("UTF-8"));
             SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
 
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
             cipher.init(Cipher.DECRYPT_MODE, skeySpec, iv);
-            byte[] original = cipher.doFinal(hexStringToByteArray(encrypted));
+            byte[] original = cipher.doFinal(hexStringToByteArray(data[0]));
 
             return new String(original);
         } catch (Exception ex) {
@@ -129,6 +157,35 @@ public class AESEncryption{
             stringbuilder.append((char)decimal);
         }
         return stringbuilder.toString();
+    }
+
+
+    public static String generateRandomString(int length) {
+        // You can customize the characters that you want to add into
+        // the random strings
+        String CHAR = "ABCDEF";
+        String NUMBER = "0123456789";
+
+        String DATA_FOR_RANDOM_STRING = CHAR + NUMBER;
+        SecureRandom random = new SecureRandom();
+
+        if (length < 1) throw new IllegalArgumentException();
+
+        StringBuilder sb = new StringBuilder(length);
+
+        for (int i = 0; i < length; i++) {
+            // 0-62 (exclusive), random returns 0-61
+            int rndCharAt = random.nextInt(DATA_FOR_RANDOM_STRING.length());
+            char rndChar = DATA_FOR_RANDOM_STRING.charAt(rndCharAt);
+
+            sb.append(rndChar);
+        }
+
+        return sb.toString();
+    }
+
+    public static String rightPadZeros(String str, int num) {
+        return String.format("%1$-" + num + "s", str).replace(' ', '0');
     }
 }
 

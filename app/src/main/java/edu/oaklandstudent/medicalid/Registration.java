@@ -150,7 +150,7 @@ public class Registration extends AppCompatActivity implements TextWatcher {
                 editor.commit();
 
 
-                final String encryptedEmail = AESEncryption.encrypt(getEmail(), sha512Password);
+                final String encryptedEmail = AESEncryption.encryptEmail(getEmail(), sha512Password);
 
 
 

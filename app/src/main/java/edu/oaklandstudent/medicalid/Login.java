@@ -54,7 +54,7 @@ public class Login extends AppCompatActivity{
                 Log.v("Main","The saved password was: " + getPassword());
 
                 String sha512Password = getSHA512(getPassword()).substring(0, 32); // Generate a SHA512 of password
-                final String encryptedEmail = AESEncryption.encrypt(getEmail(), sha512Password);
+                final String encryptedEmail = AESEncryption.encryptEmail(getEmail(), sha512Password);
 
                 SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
                 final SharedPreferences.Editor editor = prefs.edit();
