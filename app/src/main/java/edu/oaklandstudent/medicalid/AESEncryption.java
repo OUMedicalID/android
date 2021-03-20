@@ -15,7 +15,7 @@ import java.security.SecureRandom;
 import java.util.Random;
 
 
-public class AESEncryption{
+public class AESEncryption extends android.app.Activity{
 
     public static String MEDICAL_ID_DOMAIN = "https://med.mathew.me";
     private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
