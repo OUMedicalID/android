@@ -8,8 +8,10 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -18,6 +20,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import okhttp3.Call;
 import okhttp3.FormBody;
@@ -43,6 +46,13 @@ public class Login extends AppCompatActivity{
         final EditText passwordText = findViewById(R.id.password);
         Button loginButton = findViewById(R.id.loginButton);
         TextView createAccount = findViewById(R.id.createAccount);
+
+        ImageView iv = (ImageView)findViewById(R.id.imageView);
+        ViewGroup.LayoutParams params = (ViewGroup.LayoutParams) iv.getLayoutParams();
+        params.width = 600;
+        params.height = 510;
+        // existing height is ok as is, no need to edit it
+        iv.setLayoutParams(params);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
