@@ -127,7 +127,7 @@ public class Registration extends AppCompatActivity implements TextWatcher {
                 Log.v("Main","The saved email was: " + getEmail());
                 Log.v("Main","The saved password was: " + getPassword());
 
-
+                if(getPassword() == null)return;
 
                 String sha512Password = getSHA512(getPassword()).substring(0, 32); // Generate a SHA512 of password
                 //Log.wtf("PASSWORD", getPassword());
@@ -284,6 +284,11 @@ public class Registration extends AppCompatActivity implements TextWatcher {
             return true;
         }
         else return false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Do Here what ever you want do on back press;
     }
 }
 

@@ -144,5 +144,11 @@ public class Login extends AppCompatActivity{
     public String getPassword(){
         return password;
     }
+
+
+    @Override
+    public void onBackPressed() {
+        // Do Here what ever you want do on back press;
+    }
 }
 

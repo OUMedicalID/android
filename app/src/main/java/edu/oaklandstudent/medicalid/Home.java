@@ -43,7 +43,7 @@ public class Home extends Fragment {
         String key = prefs.getString("sha512Key", "");
 
         String name = AESEncryption.decrypt(prefs.getString("MID_Name", null), key);
-        if(name != null) {
+        if(name != null && !name.equals("")) {
             tv1.setText("Welcome, " + name + "!");
         }else{
             tv1.setText("Welcome!");
