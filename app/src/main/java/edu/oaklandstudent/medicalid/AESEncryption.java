@@ -17,7 +17,7 @@ import java.util.Random;
 
 public class AESEncryption {
 
-    public static String MEDICAL_ID_DOMAIN = "https://med.mathew.me";
+    public static String MEDICAL_ID_DOMAIN = "https://medicalidou.com";
     private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
 
     public static String encrypt(String value, String key) {

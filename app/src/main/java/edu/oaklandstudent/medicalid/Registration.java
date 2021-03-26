@@ -130,8 +130,7 @@ public class Registration extends AppCompatActivity implements TextWatcher {
                 if(getPassword() == null)return;
 
                 String sha512Password = getSHA512(getPassword()).substring(0, 32); // Generate a SHA512 of password
-                //Log.wtf("PASSWORD", getPassword());
-                Log.wtf("PASSWORD", sha512Password);
+
 
 /*
                 try {
@@ -165,7 +164,7 @@ public class Registration extends AppCompatActivity implements TextWatcher {
                                     .build();
 
                             Request request = new Request.Builder()
-                                    .url("https://med.mathew.me/register.php")
+                                    .url("https://medicalidou.com/register.php")
                                     .post(formBody)
                                     .build();
 

@@ -247,7 +247,7 @@ public class MainActivity extends AppCompatActivity implements NfcAdapter.Reader
     }
 
     private void enableBottomBar(boolean enable) {
-        Log.wtf("AUTH", "Nav disabled");
+
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         for (int i = 0; i < bottomNav.getMenu().size(); i++) {
             bottomNav.getMenu().getItem(i).setEnabled(enable);

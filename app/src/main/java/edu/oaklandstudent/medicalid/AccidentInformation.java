@@ -85,7 +85,7 @@ public class AccidentInformation extends AppCompatActivity implements View.OnCli
 
                     Gson gson = new GsonBuilder().create();
                     String jsonArray = gson.toJson(ourConditionsList);
-                    Log.wtf("CONDITIONS", jsonArray);
+
                     String encryptedJSON = AESEncryption.encrypt(jsonArray, key);
                     editor.remove("MID_Injuries").commit();
                     editor.putString("MID_Injuries", encryptedJSON);
@@ -183,12 +183,12 @@ public class AccidentInformation extends AppCompatActivity implements View.OnCli
         Type listType = new TypeToken<List<String>>() {
         }.getType();
         List<String> posts = gson.fromJson(jsonOutput, listType);
-        Log.wtf("CONDITIONS", "X:| " + String.valueOf(posts));
+
 
 
 
         for(int i = 0;i < posts.size();i++) {
-            Log.wtf("CONDITIONS", "X:| "+ String.valueOf(posts.get(i)));
+
             final View conditionsView = getLayoutInflater().inflate(R.layout.row_add, null, false);
 
             EditText editText = (EditText) conditionsView.findViewById(R.id.row_add);

@@ -87,7 +87,7 @@ public class Login extends AppCompatActivity{
                                     .build();
 
                             Request request = new Request.Builder()
-                                    .url("https://med.mathew.me/login.php")
+                                    .url("https://medicalidou.com/login.php")
                                     .post(formBody)
                                     .build();
 
@@ -104,7 +104,7 @@ public class Login extends AppCompatActivity{
                             }
 
                             for (Map.Entry<String, String> entry : map.entrySet() ) {
-                                //Log.wtf("RESPONDER", entry.getKey()+":"+entry.getValue());
+
                                 if(!entry.getKey().startsWith("MID_"))continue;
                                 editor.putString(entry.getKey(),entry.getValue());
                             }

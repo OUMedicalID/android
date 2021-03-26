@@ -227,10 +227,8 @@ public class PersonalInformation extends AppCompatActivity{
                 editor.putString("MID_PrimaryInsuranceNumber", AESEncryption.encrypt(primaryInsuranceNumber.getValueAsString(),key));
                 editor.putString("MID_PrimaryInsuranceGroupNumberOrMainPH", AESEncryption.encrypt(primaryInsuranceGroupNumberOrMainPH.getValueAsString(),key));
 
-                //Log.wtf("OUS45", "Gender ID is "+gender.getId());
-                //Log.wtf("OUS45", "Gender Tag is "+gender.getTag());
-                //Log.wtf("OUS45", "Gender val is "+gender.getValue());
-                //Log.wtf("OUS45", "Gender valas is "+gender.getValueAsString());
+
+
                 editor.commit();
                 editor.apply();
                 Log.v("Main", "The button was pressed." +"\n");

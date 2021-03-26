@@ -65,7 +65,7 @@ public class Settings extends Fragment {
             @Override
             public Unit invoke(String newValue, BaseFormElement<String> element) {
 
-                Log.wtf("MAINDEBUG", newValue);
+
 
 
 

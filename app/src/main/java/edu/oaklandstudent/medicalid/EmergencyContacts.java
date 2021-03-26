@@ -178,7 +178,6 @@ public class EmergencyContacts extends AppCompatActivity{
         if (eContact2JSON != null){
             try {
                 JSONArray jsonArray2 = new JSONArray(eContact2JSON);
-                //Log.wtf("MAINDEBUG", "The arr:" + String.valueOf(jsonArray));
                 if(jsonArray2.getString(0) == null || jsonArray2.getString(1) == null || jsonArray2.getString(2) == null) return;
                 name2.setValue(jsonArray2.getString(0));
                 phone2.setValue(jsonArray2.getString(1));

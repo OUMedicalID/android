@@ -52,14 +52,14 @@ public class ExportData {
                     RequestBody formBody = builder.build();
 
                     Request request = new Request.Builder()
-                            .url( "https://med.mathew.me/receiveData.php" )
+                            .url( "https://medicalidou.com/receiveData.php" )
                             .post( formBody )
                             .build();
 
                     Call call = client.newCall(request);
                     try {
                         Response response = call.execute();
-                        Log.wtf("POST", response.body().string());
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
