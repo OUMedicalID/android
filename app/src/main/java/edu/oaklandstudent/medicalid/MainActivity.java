@@ -308,7 +308,13 @@ public class MainActivity extends AppCompatActivity implements NfcAdapter.Reader
             // Or if we want to write a Ndef message
 
             // Create a Ndef Record
-            NdefRecord mRecord = NdefRecord.createTextRecord("en", "English String");
+
+            SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = prefs.edit();
+
+            String msg = "[[" + prefs.getString("email", "") + ":" + prefs.getString("sha512Key", "").substring(0, 32) + "]]";
+
+            NdefRecord mRecord = NdefRecord.createTextRecord("en", msg);
 
             // Add to a NdefMessage
             NdefMessage mMsg = new NdefMessage(mRecord);
