@@ -63,16 +63,10 @@ public class Login extends AppCompatActivity{
                 Log.v("Main","The saved email was: " + getEmail());
                 Log.v("Main","The saved password was: " + getPassword());
 
-                String sha512Password = getSHA512(getPassword()).substring(0, 32); // Generate a SHA512 of password
+                final String sha512Password = getSHA512(getPassword()).substring(0, 32); // Generate a SHA512 of password
                 final String encryptedEmail = AESEncryption.encryptEmail(getEmail(), sha512Password);
 
-                SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
-                final SharedPreferences.Editor editor = prefs.edit();
-                editor.putString("sha512Key",sha512Password);
-                editor.putString("isLoggedIn","true");
-                editor.putString("email",encryptedEmail);
-                editor.apply();
-                editor.commit();
+
 
 
 
@@ -102,6 +96,14 @@ public class Login extends AppCompatActivity{
                                 Snackbar.make(findViewById(android.R.id.content), "Invalid Login", Snackbar.LENGTH_SHORT).show();
                                 return;
                             }
+
+                            SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
+                            final SharedPreferences.Editor editor = prefs.edit();
+                            editor.putString("sha512Key",sha512Password);
+                            editor.putString("isLoggedIn","true");
+                            editor.putString("email",encryptedEmail);
+                            editor.apply();
+                            editor.commit();
 
                             for (Map.Entry<String, String> entry : map.entrySet() ) {
 
