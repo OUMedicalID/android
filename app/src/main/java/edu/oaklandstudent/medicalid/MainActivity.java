@@ -50,18 +50,31 @@ public class MainActivity extends AppCompatActivity implements NfcAdapter.Reader
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        final String isLoggedIn = prefs.getString("isLoggedIn", "false");
+
+        new Thread(new Runnable() {
+            public void run() {
+                if (isLoggedIn.equals("false")) {
+                    Intent myIntent = new Intent(MainActivity.this.getApplicationContext(), Login.class);
+                    startActivity(myIntent);
+                    // Print out all records.
+                }
+            }
+        }).start();
+
+
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
-        SharedPreferences prefs = getSharedPreferences("edu.oaklandstudent.medicalid", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
         String key = prefs.getString("sha512Key", "");
         String myPassword = AESEncryption.decrypt(prefs.getString("password", null), key);
         String bioAuth = prefs.getString("bioAuth", "false");
-        String isLoggedIn = prefs.getString("isLoggedIn", "false");
-
 
         if (myPassword != null && !myPassword.equals("")) {
             enableBottomBar(false); // Prevent an exploit where users can move during the split second alertdialog is gone.
@@ -73,11 +86,7 @@ public class MainActivity extends AppCompatActivity implements NfcAdapter.Reader
         }
 
 
-        if (isLoggedIn.equals("false")) {
-            Intent myIntent = new Intent(MainActivity.this.getApplicationContext(), Login.class);
-            startActivity(myIntent);
-            // Print out all records.
-        }
+
 
 
         DataStoreUtil dataStore = new DataStoreUtil(this);
